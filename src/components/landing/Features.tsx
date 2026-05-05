@@ -5,7 +5,7 @@ const features = [
       "Drag, drop, and connect nodes with a clean, distraction-free interface. Create mind maps in minutes.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -25,7 +25,7 @@ const features = [
       "Switch between tree, radial, and freeform layouts to find the structure that works best for your ideas.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -45,7 +45,7 @@ const features = [
       "Every change you make is saved automatically. Never lose your work, even if you close the tab.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -65,7 +65,7 @@ const features = [
       "Download your mind maps as high-resolution PNG images or PDF documents for presentations and sharing.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -85,7 +85,7 @@ const features = [
       "Generate shareable links for any mind map. Collaborate with your team in real time.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -105,7 +105,7 @@ const features = [
       "Invite teammates to view and edit mind maps. Built for collaboration from the ground up.",
     icon: (
       <svg
-        className="h-8 w-8 text-blue-600"
+        className="h-8 w-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -121,32 +121,46 @@ const features = [
   },
 ];
 
+const accentColors = [
+  { bg: "rgba(255,128,31,0.15)", text: "#ff801f" },
+  { bg: "rgba(17,255,153,0.15)", text: "#11ff99" },
+  { bg: "rgba(59,158,255,0.15)", text: "#3b9eff" },
+];
+
 export default function Features() {
   return (
-    <section id="features" className="bg-gray-50 px-6 py-24">
+    <section id="features" className="bg-black px-6 py-24">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center text-3xl font-bold text-gray-900 sm:text-4xl">
+        <h2 className="font-heading text-center text-[56px] font-normal tracking-[-2.8px] text-[#f0f0f0]">
           Everything You Need to Mind Map
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-gray-600">
+        <p className="mx-auto mt-4 max-w-2xl text-center text-base text-[#a1a4a5]">
           Powerful features designed to help you capture, organize, and share
           your ideas effortlessly.
         </p>
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-xl border border-gray-200 bg-white p-8 transition-shadow hover:shadow-md"
-            >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50">
-                {feature.icon}
+          {features.map((feature, i) => {
+            const accent = accentColors[i % accentColors.length];
+            return (
+              <div
+                key={feature.title}
+                className="rounded-[16px] border border-[rgba(214,235,253,0.19)] bg-transparent p-6 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px]"
+              >
+                <div
+                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: accent.bg, color: accent.text }}
+                >
+                  {feature.icon}
+                </div>
+                <h3 className="text-2xl font-medium text-[#f0f0f0]">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-base text-[#a1a4a5]">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-gray-600">{feature.description}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

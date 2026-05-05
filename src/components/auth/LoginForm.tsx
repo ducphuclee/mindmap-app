@@ -16,14 +16,14 @@ export default function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       {state?.error && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+        <div className="bg-[rgba(255,32,71,0.15)] border border-[rgba(255,32,71,0.3)] text-[#ff2047] rounded-[4px] p-3 text-sm">
           {state.error}
         </div>
       )}
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm text-[#a1a4a5]"
         >
           Email
         </label>
@@ -33,14 +33,14 @@ export default function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full bg-black border border-[rgba(214,235,253,0.19)] text-[#f0f0f0] placeholder:text-[#5c5c5c] rounded-[4px] px-3 py-2 focus:outline-none focus:border-[#3b9eff]"
           placeholder="you@example.com"
         />
       </div>
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm text-[#a1a4a5]"
         >
           Password
         </label>
@@ -50,29 +50,29 @@ export default function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full bg-black border border-[rgba(214,235,253,0.19)] text-[#f0f0f0] placeholder:text-[#5c5c5c] rounded-[4px] px-3 py-2 focus:outline-none focus:border-[#3b9eff]"
           placeholder="••••••••"
         />
       </div>
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full bg-white text-black rounded-[9999px] font-medium py-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? 'Signing in...' : 'Log In'}
       </button>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
+          <div className="w-full border-t border-[rgba(214,235,253,0.19)]" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-2 text-gray-500">or</span>
+          <span className="bg-black px-2 text-[#464a4d]">or</span>
         </div>
       </div>
       <button
         type="button"
         onClick={handleGoogleSignIn}
-        className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        className="flex w-full items-center justify-center gap-2 bg-transparent border border-[rgba(214,235,253,0.19)] text-[#f0f0f0] rounded-[9999px] px-4 py-2 text-sm font-medium hover:bg-[rgba(255,255,255,0.08)]"
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24">
           <path

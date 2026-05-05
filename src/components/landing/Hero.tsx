@@ -2,31 +2,32 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-        Map Your Ideas with{" "}
-        <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-          AI-Powered
-        </span>{" "}
-        Mind Maps
-      </h1>
-      <p className="mt-6 max-w-2xl text-lg text-gray-600 sm:text-xl">
-        Turn your thoughts into structured, visual mind maps in seconds.
-        Collaborate, export, and share — all from your browser.
-      </p>
-      <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-        <Link
-          href="/signup"
-          className="rounded-lg bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-lg transition-colors hover:bg-blue-700"
-        >
-          Get Started Free
-        </Link>
-        <a
-          href="#features"
-          className="rounded-lg border border-gray-300 px-8 py-3 text-base font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          See Demo
-        </a>
+    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-20 md:py-32 text-center overflow-hidden bg-black">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,_89,_0,_0.15)_0%,_transparent_70%)] pointer-events-none" />
+      <div className="relative z-10 flex flex-col items-center">
+        <h1 className="max-w-4xl font-display-serif text-[76.8px] md:text-[96px] font-normal leading-none tracking-[-0.96px] text-[#f0f0f0]">
+          Map Your Ideas with{" "}
+          AI-Powered{" "}
+          Mind Maps
+        </h1>
+        <p className="mt-6 max-w-2xl font-display-sans text-[20px] leading-[1.30] text-[#a1a4a5]">
+          Turn your thoughts into structured, visual mind maps in seconds.
+          Collaborate, export, and share — all from your browser.
+        </p>
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <Link
+            href="/signup"
+            className="bg-white text-black px-4 py-2 rounded-[9999px] text-sm font-medium"
+          >
+            Get Started Free
+          </Link>
+          <a
+            href="#features"
+            className="border border-[rgba(214,235,253,0.19)] text-[#f0f0f0] px-4 py-2 rounded-[9999px] text-sm font-medium hover:bg-[rgba(255,255,255,0.28)] transition-colors"
+          >
+            See Demo
+          </a>
+        </div>
       </div>
     </section>
   );

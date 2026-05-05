@@ -162,17 +162,17 @@ export default function MindmapGrid({ initialMindmaps, count, isPro, isLoading, 
   }, []);
 
   const tabClass = (tab: FilterTab) =>
-    `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+    `rounded-[4px] px-3 py-1.5 text-sm font-medium transition-colors ${
       filterTab === tab
-        ? 'bg-blue-600 text-white dark:bg-blue-700'
-        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+        ? 'bg-[rgba(255,255,255,0.08)] text-[#f0f0f0]'
+        : 'text-[#a1a4a5] hover:text-[#f0f0f0] hover:bg-[rgba(255,255,255,0.04)]'
     }`;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Mindmaps</h1>
+          <h1 className="font-heading text-2xl text-[#f0f0f0]">My Mindmaps</h1>
           <UsageBadge count={count} isPro={isPro} />
         </div>
         <CreateButton onClick={handleCreate} count={count} isPro={isPro} />

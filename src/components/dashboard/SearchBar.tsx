@@ -9,7 +9,7 @@ export default function SearchBar({ value, onChange }: Props) {
   return (
     <div className="relative flex-1">
       <svg
-        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5c5c5c]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -26,7 +26,7 @@ export default function SearchBar({ value, onChange }: Props) {
         placeholder="Search mindmaps..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+        className="w-full rounded-[4px] border border-[rgba(214,235,253,0.19)] bg-black py-2 pl-10 pr-3 text-sm text-[#f0f0f0] placeholder:text-[#5c5c5c] focus:border-[#3b9eff] focus:outline-none"
       />
     </div>
   );

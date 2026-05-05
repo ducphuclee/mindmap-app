@@ -74,12 +74,12 @@ export default function MindmapCard({
   return (
     <>
       <div
-        className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800 dark:border-gray-700"
+        className="group cursor-pointer overflow-hidden rounded-[16px] border border-[rgba(214,235,253,0.19)] bg-transparent transition-colors hover:bg-[rgba(255,255,255,0.03)]"
         onContextMenu={isOwner ? handleContextMenu : undefined}
       >
         {/* Thumbnail placeholder */}
         <div
-          className="relative flex h-36 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500"
+          className="relative flex h-36 items-center justify-center bg-gradient-to-br from-[#ff801f]/30 to-[#3b9eff]/30"
           onClick={() => onClick(mindmap.id)}
         >
           <StarButton
@@ -107,10 +107,10 @@ export default function MindmapCard({
 
         {/* Card body */}
         <div className="p-4" onClick={() => onClick(mindmap.id)}>
-          <h3 className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="truncate text-sm font-medium text-[#f0f0f0]">
             {mindmap.title}
           </h3>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Modified {timeAgo}</p>
+          <p className="mt-1 text-xs text-[#a1a4a5]">Modified {timeAgo}</p>
         </div>
       </div>
 
@@ -118,11 +118,11 @@ export default function MindmapCard({
       {isOwner && contextMenu && (
         <div
           ref={menuRef}
-          className="fixed z-50 w-40 rounded-md border border-gray-200 bg-white py-1 shadow-lg dark:bg-gray-800 dark:border-gray-700"
+          className="fixed z-50 w-40 rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black py-1"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
           <button
-            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="flex w-full items-center px-4 py-2 text-left text-sm text-[#f0f0f0] hover:bg-[rgba(255,255,255,0.06)]"
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);
@@ -132,7 +132,7 @@ export default function MindmapCard({
             Rename
           </button>
           <button
-            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="flex w-full items-center px-4 py-2 text-left text-sm text-[#f0f0f0] hover:bg-[rgba(255,255,255,0.06)]"
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);
@@ -142,7 +142,7 @@ export default function MindmapCard({
             Duplicate
           </button>
           <button
-            className="flex w-full items-center px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
+            className="flex w-full items-center px-4 py-2 text-left text-sm text-[#ff2047] hover:bg-[rgba(255,255,255,0.06)]"
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);

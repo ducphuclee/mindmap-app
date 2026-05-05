@@ -10,7 +10,7 @@ export default function EmptyState({ onCreateClick, hasSearch, filterTab }: Prop
   if (filterTab === 'starred' && !hasSearch) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <p className="text-gray-500 dark:text-gray-400">No starred mindmaps yet. Star a mindmap to find it quickly.</p>
+        <p className="text-[#a1a4a5]">No starred mindmaps yet. Star a mindmap to find it quickly.</p>
       </div>
     );
   }
@@ -18,7 +18,7 @@ export default function EmptyState({ onCreateClick, hasSearch, filterTab }: Prop
   if (hasSearch) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <p className="text-gray-500 dark:text-gray-400">No mindmaps match your search.</p>
+        <p className="text-[#a1a4a5]">No mindmaps match your search.</p>
       </div>
     );
   }
@@ -26,7 +26,7 @@ export default function EmptyState({ onCreateClick, hasSearch, filterTab }: Prop
   return (
     <div className="flex flex-col items-center justify-center py-16">
       <svg
-        className="mb-4 h-16 w-16 text-gray-300 dark:text-gray-600"
+        className="mb-4 h-16 w-16 text-[#464a4d]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -38,15 +38,15 @@ export default function EmptyState({ onCreateClick, hasSearch, filterTab }: Prop
           d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
         />
       </svg>
-      <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+      <h2 className="text-xl font-semibold text-[#a1a4a5]">
         Create your first mindmap
       </h2>
-      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mt-2 text-sm text-[#a1a4a5]">
         Get started by creating a new mindmap.
       </p>
       <button
         onClick={onCreateClick}
-        className="mt-6 rounded-md bg-blue-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+        className="mt-6 rounded-[9999px] border border-[rgba(214,235,253,0.19)] px-6 py-2 text-sm font-medium text-[#f0f0f0] transition-colors hover:bg-[rgba(255,255,255,0.08)]"
       >
         + New Mindmap
       </button>
