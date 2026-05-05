@@ -445,7 +445,7 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
   );
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-black">
+    <div className="flex h-screen flex-col overflow-hidden bg-gray-50">
       <EditorHeader title={mindmap.title} saveStatus={saveStatus} />
       <EditorToolbar
         currentLayout={layoutType}

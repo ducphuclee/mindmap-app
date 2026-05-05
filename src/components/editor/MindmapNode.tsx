@@ -138,19 +138,19 @@ export default function MindmapNode({
         )}
 
         {isHovered && !isEditing && (
-          <div className="nodrag absolute -top-3 right-0 flex gap-1">
+          <div className="nodrag absolute -top-4 right-0 flex gap-0.5">
             <button
               onClick={() => onSendToChat?.(data.label)}
-              className="rounded-full bg-green-500 px-2 py-0.5 text-xs text-white shadow hover:bg-green-600 transition-colors"
+              className="rounded-full bg-green-500 px-1.5 py-0.5 text-[10px] leading-none text-white shadow hover:bg-green-600 transition-colors whitespace-nowrap"
             >
-              💬 Send to chat
+              Send to chat
             </button>
             <button
               onClick={() => onExpand?.(id)}
-              className={`rounded-full bg-purple-500 px-2 py-0.5 text-xs text-white shadow hover:bg-purple-600 transition-colors ${isExpanding ? 'opacity-50 cursor-wait' : ''}`}
+              className={`rounded-full bg-purple-500 px-1.5 py-0.5 text-[10px] leading-none text-white shadow hover:bg-purple-600 transition-colors whitespace-nowrap ${isExpanding ? 'opacity-50 cursor-wait' : ''}`}
               disabled={isExpanding}
             >
-              {isExpanding ? '...' : '⚡ Expand'}
+              {isExpanding ? '...' : 'Expand'}
             </button>
           </div>
         )}
