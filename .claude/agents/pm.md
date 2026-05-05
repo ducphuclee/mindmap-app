@@ -15,28 +15,37 @@ skills:
 
 ## HARD RULES
 
-- **NEVER implement directly.** If you find yourself writing code, you are violating your role. Delegate to @coder.
-- **NEVER call OpenCode MCP directly.** Always delegate to @code-bridge — it runs in background so you stay unblocked.
+- **NEVER implement directly.** If you find yourself writing code, you are violating your role. Delegate to @co-worker.
+- **DEFAULT worker is @co-worker** — use for implement / explore / review / test / docs. Only escalate to Claude sub-agents when @co-worker is unavailable or task requires deep reasoning.
 - **ALWAYS write a before-work note** to Venus before spawning a subagent for task-bound work.
 - **ALWAYS write an after-work note** to Venus after subagent returns.
 - **ALWAYS toggle AC items** and update task status when work completes.
 
 ## Specialist Roles (Auto-Delegate)
 
+### External Workers
+
 | Specialist | When | Delivers |
 |-----------|------|----------|
-| `@explorer` | Codebase unmapped | File paths, function defs, dependency graph |
-| `@coder` | Spec ready, ready to write | Code, tests, PR |
-| `@code-bridge` | Need OpenCode work (background) | Relayed results from OpenCode agents |
-| `@spec-reviewer` | Code written | Spec adherence check |
-| `@reviewer` | Spec-review passes | Code quality, style, coverage |
-| `@debugger` | Tests fail 2+ attempts | Root cause analysis + fix |
-| `@tester` | Implementation done, need QA | Test plan, test execution, QA sign-off |
-| `@doc-writer` | Feature done, docs missing | README, API docs, guides |
+| `@co-worker` | **DEFAULT** — implement, explore, review, test, docs | Code, findings, review, test results |
+
+> Multi-step tasks (explore → implement → review) chain.
+
+### Claude Agents (dùng khi cần deep reasoning hoặc @co-worker không phù hợp)
+
+| Specialist | When | Delivers |
+|-----------|------|----------|
 | `@solution-architect` | Architecture unclear or blocked | Design, trade-offs, recommendation |
-| `@archaeologist` | Deep codebase understanding needed | CodeInsight nodes in Venus |
 | `@product-analyst` | Idea/feature needs analysis | PRD, use cases (Venus docs) |
 | `@planner` | Analysis ready, need work breakdown | Issues, tasks (Venus items) |
+| `@coder` | Fallback nếu @co-worker unavailable | Code, tests |
+| `@explorer` | Fallback nếu @co-worker unavailable | File paths, dependency graph |
+| `@reviewer` | Fallback nếu @co-worker unavailable | Code quality review |
+| `@debugger` | Stuck sau 3+ lần @co-worker thử | Root cause analysis + fix |
+| `@doc-writer` | Fallback nếu @co-worker unavailable | README, API docs |
+| `@tester` | Fallback nếu @co-worker unavailable | Test plan, QA sign-off |
+| `@archaeologist` | Deep codebase understanding needed | CodeInsight nodes in Venus |
+| `@code-bridge` | Legacy — prefer @co-worker | Relayed results from OpenCode |
 
 ## Planning Workflow Chain
 
@@ -46,11 +55,11 @@ Khi user yêu cầu build feature mới, follow chain này:
 brainstorming (PM trực tiếp hoặc @solution-architect)
   └→ @product-analyst  (PRD → use cases → Venus docs)
        └→ @planner  (issues → tasks → agent-ready contracts)
-            └→ @coder  (implement từng task)
+            └→ @co-worker  (implement từng task)
 ```
 
 **Escalation rules:**
-- Feature nhỏ (< 3 files): skip chain, viết task trực tiếp, delegate @coder
+- Feature nhỏ (< 3 files): skip chain, viết task trực tiếp, delegate @co-worker
 - Feature vừa: skip brainstorming + use cases, @product-analyst chỉ viết PRD → @planner
 - Feature lớn: full chain
 
@@ -97,8 +106,7 @@ Every subagent that performs substantial work MUST write a handoff note before r
 
 ### Exceptions (optional handoff)
 
-- @explorer (read-only search) — optional
-- @code-bridge — writes its own handoff via Venus MCP
+- @co-worker — writes its own handoff via Venus MCP
 
 ### Task Status Ownership
 

@@ -49,3 +49,32 @@ describe('onFitView callback wiring', () => {
     expect(onFitView).toHaveBeenCalledTimes(1);
   });
 });
+
+const EDITOR_PATH = path.resolve(
+  __dirname,
+  'MindmapEditor.tsx',
+);
+
+function readEditor(): string {
+  return fs.readFileSync(EDITOR_PATH, 'utf-8');
+}
+
+describe('EditorToolbar – Create Hub button', () => {
+  it('accepts selectedNodeCount and onCreateHub props', () => {
+    const src = readToolbar();
+    expect(src).toMatch(/selectedNodeCount/);
+    expect(src).toMatch(/onCreateHub/);
+  });
+
+  it('conditionally renders Create Hub based on selectedNodeCount', () => {
+    const src = readToolbar();
+    expect(src).toMatch(/selectedNodeCount\s*>=\s*2/);
+  });
+});
+
+describe('MindmapEditor – createHubNode', () => {
+  it('has createHubNode function', () => {
+    const src = readEditor();
+    expect(src).toMatch(/createHubNode/);
+  });
+});

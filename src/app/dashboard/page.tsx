@@ -24,7 +24,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MindmapGrid initialMindmaps={mindmaps} count={count} isPro={isPro} />
+      <MindmapGrid initialMindmaps={mindmaps} count={count} isPro={isPro} currentUserId={user.id} />
     </div>
   );
 }

@@ -14,8 +14,8 @@ export default function UsageBadge({ count, isPro }: Props) {
     <span
       className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
         isAtLimit
-          ? 'bg-red-100 text-red-700'
-          : 'bg-gray-100 text-gray-600'
+          ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
       }`}
     >
       {count}/{FREE_TIER_LIMIT} maps used

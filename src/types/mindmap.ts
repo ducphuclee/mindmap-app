@@ -11,6 +11,7 @@ export interface MindmapNodeData extends Record<string, unknown> {
   fontSize?: 'sm' | 'md' | 'lg';
   bold?: boolean;
   italic?: boolean;
+  autoEditId?: string;
 }
 
 // Mirrors React Flow's Node<T> interface

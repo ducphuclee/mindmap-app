@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Mindmap } from '@/types/mindmap';
 import { formatDistanceToNow } from 'date-fns';
-import DeleteConfirmModal from './DeleteConfirmModal';
+import StarButton from './StarButton';
 
 interface ContextMenu {
   x: number;
@@ -12,10 +12,13 @@ interface ContextMenu {
 
 interface Props {
   mindmap: Mindmap;
-  onRename: (id: string, title: string) => void;
+  currentUserId: string;
   onDuplicate: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDeleteRequest: (id: string) => void;
+  onRenameRequest: (id: string) => void;
   onClick: (id: string) => void;
+  isStarred: boolean;
+  onStarToggle: (id: string) => void;
 }
 
 function formatTimestamp(iso: string): string {
@@ -28,17 +31,17 @@ function formatTimestamp(iso: string): string {
 
 export default function MindmapCard({
   mindmap,
-  onRename,
+  currentUserId,
   onDuplicate,
-  onDelete,
+  onDeleteRequest,
+  onRenameRequest,
   onClick,
+  isStarred,
+  onStarToggle,
 }: Props) {
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [renameValue, setRenameValue] = useState(mindmap.title);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const renameInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isOwner = currentUserId !== undefined && mindmap.user_id === currentUserId;
 
   // Close context menu when clicking outside
   useEffect(() => {
@@ -60,35 +63,10 @@ export default function MindmapCard({
     };
   }, [contextMenu]);
 
-  // Focus and select rename input when it appears
-  useEffect(() => {
-    if (isRenaming && renameInputRef.current) {
-      renameInputRef.current.focus();
-      renameInputRef.current.select();
-    }
-  }, [isRenaming]);
-
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setContextMenu({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleRenameSubmit = () => {
-    const trimmed = renameValue.trim();
-    if (trimmed && trimmed !== mindmap.title) {
-      onRename(mindmap.id, trimmed);
-    }
-    setIsRenaming(false);
-  };
-
-  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleRenameSubmit();
-    } else if (e.key === 'Escape') {
-      setRenameValue(mindmap.title);
-      setIsRenaming(false);
-    }
   };
 
   const timeAgo = formatTimestamp(mindmap.updated_at);
@@ -96,14 +74,19 @@ export default function MindmapCard({
   return (
     <>
       <div
-        className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
-        onContextMenu={handleContextMenu}
+        className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800 dark:border-gray-700"
+        onContextMenu={isOwner ? handleContextMenu : undefined}
       >
         {/* Thumbnail placeholder */}
         <div
-          className="flex h-36 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500"
+          className="relative flex h-36 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500"
           onClick={() => onClick(mindmap.id)}
         >
+          <StarButton
+            mindmapId={mindmap.id}
+            isStarred={isStarred}
+            onToggle={onStarToggle}
+          />
           <svg
             className="h-12 w-12 text-white/80"
             fill="none"
@@ -117,50 +100,39 @@ export default function MindmapCard({
               d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
             />
           </svg>
+          <span className="absolute bottom-2 right-2 rounded-full bg-black/40 px-2 py-0.5 text-xs text-white/90 backdrop-blur-sm">
+            {mindmap.data.nodes.length} nodes
+          </span>
         </div>
 
         {/* Card body */}
         <div className="p-4" onClick={() => onClick(mindmap.id)}>
-          {isRenaming ? (
-            <input
-              ref={renameInputRef}
-              type="text"
-              value={renameValue}
-              onChange={(e) => setRenameValue(e.target.value)}
-              onBlur={handleRenameSubmit}
-              onKeyDown={handleRenameKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full rounded border border-blue-500 px-2 py-1 text-sm font-medium text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          ) : (
-            <h3 className="truncate text-sm font-medium text-gray-900">
-              {mindmap.title}
-            </h3>
-          )}
-          <p className="mt-1 text-xs text-gray-500">Modified {timeAgo}</p>
+          <h3 className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+            {mindmap.title}
+          </h3>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Modified {timeAgo}</p>
         </div>
       </div>
 
-      {/* Context menu */}
-      {contextMenu && (
+      {/* Context menu — only for owners */}
+      {isOwner && contextMenu && (
         <div
           ref={menuRef}
-          className="fixed z-50 w-40 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+          className="fixed z-50 w-40 rounded-md border border-gray-200 bg-white py-1 shadow-lg dark:bg-gray-800 dark:border-gray-700"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
           <button
-            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);
-              setIsRenaming(true);
-              setRenameValue(mindmap.title);
+              onRenameRequest(mindmap.id);
             }}
           >
             Rename
           </button>
           <button
-            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);
@@ -174,24 +146,12 @@ export default function MindmapCard({
             onClick={(e) => {
               e.stopPropagation();
               setContextMenu(null);
-              setShowDeleteModal(true);
+              onDeleteRequest(mindmap.id);
             }}
           >
             Delete
           </button>
         </div>
-      )}
-
-      {/* Delete confirmation modal */}
-      {showDeleteModal && (
-        <DeleteConfirmModal
-          title={mindmap.title}
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={() => {
-            setShowDeleteModal(false);
-            onDelete(mindmap.id);
-          }}
-        />
       )}
     </>
   );

@@ -17,14 +17,24 @@ const FONT_SIZE_CLASSES: Record<string, string> = {
   lg: 'text-lg',
 };
 
+interface MindmapNodeExtraProps {
+  onExpand?: (nodeId: string) => void;
+  expandingNodeId?: string;
+  onSendToChat?: (nodeLabel: string) => void;
+}
+
 export default function MindmapNode({
   id,
   data,
   selected,
-}: NodeProps<Node<MindmapNodeData>>) {
+  onExpand,
+  expandingNodeId,
+  onSendToChat,
+}: NodeProps<Node<MindmapNodeData>> & MindmapNodeExtraProps) {
   const { updateNodeData } = useReactFlow();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(data.label);
+  const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,6 +47,14 @@ export default function MindmapNode({
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    if (data.autoEditId === id) {
+      requestAnimationFrame(() => {
+        setIsEditing(true);
+      });
+    }
+  }, [data.autoEditId, id]);
 
   const commitEdit = useCallback(() => {
     const trimmed = editValue.trim();
@@ -66,6 +84,7 @@ export default function MindmapNode({
   );
 
   const fontSizeClass = FONT_SIZE_CLASSES[data.fontSize ?? 'md'];
+  const isExpanding = expandingNodeId === id;
 
   return (
     <>
@@ -74,9 +93,11 @@ export default function MindmapNode({
       )}
       <div
         onDoubleClick={handleDoubleClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={[
           'min-w-[120px] max-w-[240px] cursor-pointer rounded-xl px-4 py-2 shadow-md',
-          'border-2 transition-colors',
+          'border-2 transition-colors relative',
           selected ? 'border-blue-500' : 'border-gray-200',
         ].join(' ')}
         style={{
@@ -114,6 +135,24 @@ export default function MindmapNode({
           >
             {data.label}
           </span>
+        )}
+
+        {isHovered && !isEditing && (
+          <div className="nodrag absolute -top-3 right-0 flex gap-1">
+            <button
+              onClick={() => onSendToChat?.(data.label)}
+              className="rounded-full bg-green-500 px-2 py-0.5 text-xs text-white shadow hover:bg-green-600 transition-colors"
+            >
+              💬 Send to chat
+            </button>
+            <button
+              onClick={() => onExpand?.(id)}
+              className={`rounded-full bg-purple-500 px-2 py-0.5 text-xs text-white shadow hover:bg-purple-600 transition-colors ${isExpanding ? 'opacity-50 cursor-wait' : ''}`}
+              disabled={isExpanding}
+            >
+              {isExpanding ? '...' : '⚡ Expand'}
+            </button>
+          </div>
         )}
 
         <Handle

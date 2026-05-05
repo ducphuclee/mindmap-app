@@ -3,13 +3,22 @@
 interface Props {
   onCreateClick: () => void;
   hasSearch: boolean;
+  filterTab?: 'all' | 'starred';
 }
 
-export default function EmptyState({ onCreateClick, hasSearch }: Props) {
+export default function EmptyState({ onCreateClick, hasSearch, filterTab }: Props) {
+  if (filterTab === 'starred' && !hasSearch) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16">
+        <p className="text-gray-500 dark:text-gray-400">No starred mindmaps yet. Star a mindmap to find it quickly.</p>
+      </div>
+    );
+  }
+
   if (hasSearch) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <p className="text-gray-500">No mindmaps match your search.</p>
+        <p className="text-gray-500 dark:text-gray-400">No mindmaps match your search.</p>
       </div>
     );
   }
@@ -17,7 +26,7 @@ export default function EmptyState({ onCreateClick, hasSearch }: Props) {
   return (
     <div className="flex flex-col items-center justify-center py-16">
       <svg
-        className="mb-4 h-16 w-16 text-gray-300"
+        className="mb-4 h-16 w-16 text-gray-300 dark:text-gray-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -29,10 +38,10 @@ export default function EmptyState({ onCreateClick, hasSearch }: Props) {
           d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
         />
       </svg>
-      <h2 className="text-xl font-semibold text-gray-700">
+      <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
         Create your first mindmap
       </h2>
-      <p className="mt-2 text-sm text-gray-500">
+      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
         Get started by creating a new mindmap.
       </p>
       <button

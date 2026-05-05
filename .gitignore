@@ -18,3 +18,24 @@ next-env.d.ts
 
 # Vercel
 .vercel
+
+# E2E test artifacts
+e2e-screenshots/
+test-results/
+playwright-report/
+
+# Claude agent worktrees
+.claude/worktrees/
+
+# Venus knowledge graph runtime cache
+kg/runtime/
+
+# Reference clone (not part of this project)
+wisemapping-frontend/
+
+# Playwright e2e (exploratory, not CI)
+e2e/
+playwright.config.ts
+
+# Claude skills (local tooling)
+.claude/skills/

@@ -13,6 +13,7 @@ import {
   type Node,
   type Edge,
   type NodeTypes,
+  type NodeProps,
   type OnNodesChange,
   type OnEdgesChange,
   applyNodeChanges,
@@ -26,7 +27,9 @@ import '@xyflow/react/dist/style.css';
 
 import type { MindmapNodeData, MindmapNode, MindmapEdge } from '@/types/mindmap';
 import type { Mindmap } from '@/types/mindmap';
+import type { MindmapDiff } from '@/types/ai';
 import { applyLayout, type LayoutType } from '@/lib/mindmap/layout-engine';
+import { applyDiff } from '@/lib/ai/apply-diff';
 import MindmapNodeComponent from './MindmapNode';
 import EditorHeader from './EditorHeader';
 import EditorToolbar from './EditorToolbar';
@@ -34,6 +37,9 @@ import { useUndoRedo } from '@/hooks/useUndoRedo';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import NodeContextMenu from './NodeContextMenu';
+import AIChatSidebar from './AIChatSidebar';
+import AIInitModal from './AIInitModal';
+import type { MindmapData } from '@/types/mindmap';
 
 type MindmapFlowNode = Node<MindmapNodeData>;
 
@@ -44,9 +50,7 @@ const DEFAULT_ROOT_NODE: MindmapFlowNode = {
   data: { label: 'Central Idea' },
 };
 
-const nodeTypes: NodeTypes = {
-  mindmapNode: MindmapNodeComponent,
-};
+// nodeTypes moved inside useMemo for onExpand closure
 
 interface MindmapEditorProps {
   mindmap: Mindmap;
@@ -78,13 +82,19 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
   const [layoutType, setLayoutType] = useState<LayoutType>(
     mindmap.data?.layoutType ?? 'radial',
   );
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
+  const [expandingNodeId, setExpandingNodeId] = useState<string | undefined>(undefined);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
     nodeId: string;
   } | null>(null);
+  const [modalDismissed, setModalDismissed] = useState(false);
+  const [chatPrefill, setChatPrefill] = useState('');
   const [nodes, setNodes, onNodesChange] = useNodesState<MindmapFlowNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
+
+  const selectedNodeCount = nodes.filter((n) => n.selected).length;
 
   const { canUndo, canRedo, pushSnapshot, undo, redo } = useUndoRedo();
   const { status: saveStatus } = useAutoSave({ id: mindmap.id, nodes, edges, layoutType });
@@ -174,7 +184,7 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
         id: childId,
         type: 'mindmapNode',
         position: { x: parent.position.x + 200, y: parent.position.y + 80 },
-        data: { label: 'New Node' },
+        data: { label: 'New Node', autoEditId: childId },
         selected: false,
       };
       const childEdge: Edge = {
@@ -187,6 +197,8 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
       const nextEdges = [...edges, childEdge];
       setNodes(() => nextNodes);
       setEdges(() => nextEdges);
+      setEditingNodeId(childId);
+      setTimeout(() => setEditingNodeId(null), 100);
       pushSnapshot({ nodes: nextNodes, edges: nextEdges });
     },
     [nodes, edges, setNodes, setEdges, pushSnapshot],
@@ -203,7 +215,7 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
         id: siblingId,
         type: 'mindmapNode',
         position: { x: node.position.x, y: node.position.y + 100 },
-        data: { label: 'New Node' },
+        data: { label: 'New Node', autoEditId: siblingId },
         selected: false,
       };
       const newEdge: Edge = {
@@ -216,6 +228,8 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
       const nextEdges = [...edges, newEdge];
       setNodes(() => nextNodes);
       setEdges(() => nextEdges);
+      setEditingNodeId(siblingId);
+      setTimeout(() => setEditingNodeId(null), 100);
       pushSnapshot({ nodes: nextNodes, edges: nextEdges });
     },
     [nodes, edges, setNodes, setEdges, pushSnapshot],
@@ -252,6 +266,84 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
     }
   }, []);
 
+  const createHubNode = useCallback(() => {
+    const selectedNodes = nodes.filter((n) => n.selected);
+    if (selectedNodes.length < 2) return;
+    const cx = selectedNodes.reduce((s, n) => s + n.position.x, 0) / selectedNodes.length;
+    let cy = selectedNodes.reduce((s, n) => s + n.position.y, 0) / selectedNodes.length;
+    const hasOverlap = nodes.some(
+      (n) => Math.abs(n.position.x - cx) <= 20 && Math.abs(n.position.y - cy) <= 20,
+    );
+    if (hasOverlap) cy += 50;
+    const hubId = `node-hub-${Date.now()}`;
+    const hubNode: MindmapFlowNode = {
+      id: hubId,
+      type: 'mindmapNode',
+      position: { x: cx, y: cy },
+      data: { label: 'Hub', autoEditId: hubId },
+      selected: true,
+    };
+    const newEdges: Edge[] = selectedNodes.map((n) => ({
+      id: `edge-${hubId}-${n.id}`,
+      source: hubId,
+      target: n.id,
+      type: 'smoothstep',
+    }));
+    const nextNodes = [...nodes.map((n) => ({ ...n, selected: false })), hubNode];
+    const nextEdges = [...edges, ...newEdges];
+    setNodes(() => nextNodes);
+    setEdges(() => nextEdges);
+    pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+    setEditingNodeId(hubId);
+    setTimeout(() => setEditingNodeId(null), 100);
+  }, [nodes, edges, setNodes, setEdges, pushSnapshot]);
+
+  const showAIModal = nodes.length === 1 && nodes[0].id === 'root' && nodes[0].data.label === 'Central Idea';
+
+  const handleAIApply = useCallback(
+    (data: MindmapData) => {
+      const mindmapNodes: MindmapNode[] = data.nodes.map((n) => ({
+        id: n.id,
+        type: n.type,
+        position: n.position,
+        data: n.data,
+      }));
+      const mindmapEdges: MindmapEdge[] = data.edges.map((e) => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type,
+      }));
+      const layouted = applyLayout(mindmapNodes, mindmapEdges, layoutType);
+      const nextNodes: MindmapFlowNode[] = layouted.map((n) => ({
+        id: n.id,
+        type: n.type ?? 'mindmapNode',
+        position: n.position,
+        data: n.data as MindmapNodeData,
+        selected: false,
+      }));
+      const nextEdges = mindmapEdges;
+      setNodes(nextNodes);
+      setEdges(nextEdges);
+      pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+      requestAnimationFrame(() => {
+        fitView({ duration: 400, padding: 0.15 });
+      });
+    },
+    [setNodes, setEdges, pushSnapshot, layoutType, fitView],
+  );
+
+  const handleApplyDiff = useCallback(
+    (diff: MindmapDiff) => {
+      if (!diff?.ops?.length) return;
+      const { nodes: nextNodes, edges: nextEdges } = applyDiff(nodes, edges as MindmapEdge[], diff);
+      setNodes(nextNodes as MindmapFlowNode[]);
+      setEdges(nextEdges);
+      pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+    },
+    [nodes, edges, setNodes, setEdges, pushSnapshot],
+  );
+
   useKeyboardShortcuts({
     nodes,
     edges,
@@ -265,6 +357,54 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
     onRedo: handleRedo,
     onSnapshot: handleSnapshot,
   });
+
+  const handleExpandNode = useCallback(
+    async (nodeId: string) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      if (!node) return;
+      setExpandingNodeId(nodeId);
+      try {
+        const res = await fetch('/api/ai/expand', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nodeId,
+            nodeLabel: node.data.label,
+            context: { nodes, edges },
+          }),
+        });
+        if (!res.ok) throw new Error('Expand request failed');
+        const { diff } = (await res.json()) as { diff: MindmapDiff };
+        const result = applyDiff(nodes, edges as MindmapEdge[], diff);
+        setNodes(result.nodes as MindmapFlowNode[]);
+        setEdges(result.edges);
+        pushSnapshot({ nodes: result.nodes as MindmapFlowNode[], edges: result.edges });
+      } catch (err) {
+        console.error('Failed to expand node:', err);
+      } finally {
+        setExpandingNodeId(undefined);
+      }
+    },
+    [nodes, edges, setNodes, setEdges, pushSnapshot],
+  );
+
+  const handleSendToChat = useCallback((nodeLabel: string) => {
+    setChatPrefill(`@${nodeLabel} `);
+  }, []);
+
+  const nodeTypes = useMemo<NodeTypes>(
+    () => ({
+      mindmapNode: (props: NodeProps<MindmapFlowNode>) => (
+        <MindmapNodeComponent
+          {...props}
+          onExpand={handleExpandNode}
+          expandingNodeId={expandingNodeId}
+          onSendToChat={handleSendToChat}
+        />
+      ),
+    }),
+    [handleExpandNode, expandingNodeId, handleSendToChat],
+  );
 
   const handleLayoutChange = useCallback(
     (type: LayoutType) => {
@@ -314,27 +454,38 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
         isPublic={mindmap.is_public}
         slug={mindmap.slug}
         onFitView={() => fitView({ padding: 0.1, duration: 200 })}
+        selectedNodeCount={selectedNodeCount}
+        onCreateHub={createHubNode}
       />
 
-      <div className="flex-1">
-        <ReactFlow
+      <div className="flex flex-1">
+        <div className="flex-1">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={handleNodesChange}
+            onEdgesChange={handleEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            defaultEdgeOptions={{ type: 'smoothstep' }}
+            fitView
+            multiSelectionKeyCode="Shift"
+            deleteKeyCode={null}
+            onNodeContextMenu={handleNodeContextMenu}
+            onPaneClick={() => setContextMenu(null)}
+          >
+            <MiniMap position="bottom-right" />
+            <Controls position="bottom-left" />
+            <Background />
+          </ReactFlow>
+        </div>
+        <AIChatSidebar
+          context={mindmap.data}
+          onApplyDiff={handleApplyDiff}
+          prefillInput={chatPrefill}
+          onPrefillConsumed={() => setChatPrefill('')}
           nodes={nodes}
-          edges={edges}
-          onNodesChange={handleNodesChange}
-          onEdgesChange={handleEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          defaultEdgeOptions={{ type: 'smoothstep' }}
-          fitView
-          multiSelectionKeyCode="Shift"
-          deleteKeyCode={null}
-          onNodeContextMenu={handleNodeContextMenu}
-          onPaneClick={() => setContextMenu(null)}
-        >
-          <MiniMap position="bottom-right" />
-          <Controls position="bottom-left" />
-          <Background />
-        </ReactFlow>
+        />
       </div>
 
       {contextMenu && (
@@ -350,6 +501,12 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
           onClose={() => setContextMenu(null)}
         />
       )}
+
+      <AIInitModal
+        isOpen={showAIModal && !modalDismissed}
+        onClose={() => setModalDismissed(true)}
+        onApply={handleAIApply}
+      />
     </div>
   );
 }

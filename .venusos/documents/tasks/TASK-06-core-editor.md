@@ -2,7 +2,7 @@
 
 **Source issue:** ISS-06  
 **Priority:** P0  
-**Status:** todo  
+**Status:** done  
 
 ## Plan
 

@@ -12,9 +12,11 @@ interface EditorToolbarProps {
   isPublic: boolean;
   slug: string | null;
   onFitView: () => void;
+  selectedNodeCount: number;
+  onCreateHub: () => void;
 }
 
-export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId, isPublic, slug, onFitView }: EditorToolbarProps) {
+export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId, isPublic, slug, onFitView, selectedNodeCount, onCreateHub }: EditorToolbarProps) {
   const [showShare, setShowShare] = useState(false);
 
   return (
@@ -44,6 +46,30 @@ export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId
         </svg>
         Fit
       </button>
+
+      {selectedNodeCount >= 2 && (
+        <button
+          type="button"
+          onClick={onCreateHub}
+          title="Create Hub"
+          className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-100"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Create Hub
+        </button>
+      )}
 
       <button
         type="button"

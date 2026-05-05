@@ -8,10 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check-test": "npm run test"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",
+    "@headlessui/react": "^2.2.2",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.8",
     "@xyflow/react": "^12.10.2",
@@ -20,11 +22,15 @@
     "jspdf": "^4.2.1",
     "nanoid": "^5.1.11",
     "next": "^16.2.4",
+    "openai": "^6.36.0",
+    "pdf-parse": "^2.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4.1.5",
