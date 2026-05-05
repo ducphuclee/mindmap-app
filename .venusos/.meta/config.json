@@ -1,0 +1,8 @@
+{
+  "port": 3737,
+  "domains": [
+    "global"
+  ],
+  "watchFiles": false,
+  "version": "0.1.0"
+}

@@ -1,1 +1,20 @@
+# Dependencies
 node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Environment files — NEVER commit these
+.env.local
+.env.*.local
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# OS files
+.DS_Store
+
+# Vercel
+.vercel

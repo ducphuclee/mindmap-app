@@ -1,0 +1,95 @@
+{
+  "project": {
+    "name": "mindmap-app",
+    "generated_at": "2026-05-05T06:50:07.057Z",
+    "root": "/Users/phucld/workspace/workflow-seminar"
+  },
+  "overviewCandidates": [
+    {
+      "id": "task-backend-task-003-Fixmult",
+      "type": "Task",
+      "title": "Fix multi-project DB isolation — connection pool broken after refactor",
+      "domain": "backend",
+      "status": "done",
+      "description": "## Problem\n\nVenus web server returns 0 entities for ALL projects after connection pool refactor.\n\n**Root cause (hypothesis):** `initProjectDb()` creates a fresh empty LadybugDB connection for each project path. But Venus's sync process (which populates rules/conventions/decisions from `.venusos/` markdown files) still uses the singleton `initDb()` path. The pool connections have empty databases because sync was never run on them.\n\nAdditionally, `venus start` calls `initDb()` (singleton), then `importDbPrimaryNodes()` to load entities — but `resolveProject()` now calls `initProjectDb()` which creates a *different* connection that bypasses this populated state.\n\n## What was changed (WIP — broken)\n\n- `src/modules/graph.ts`: Added `DbConnection` interface, `connectionPool` Map<string, DbConnection>, `initProjectDb()`, `ensureSchemaOn()`. Added optional `optConn` params to `executePrepared()` and `queryByType()`.\n- `src/web/server.ts`: Updated `resolveProject()` to return `{ projectPath, conn }` and pass `projectConn` to all query functions.\n\n## Expected behavior\n\n- Each project path gets an isolated DB connection\n- Default project (`initDb()`) still works as before\n- Switching projects in the web UI shows different data\n\n## Acceptance Criteria\n\n- [ ] `GET /api/tasks` returns correct data for default project (no regression)\n- [ ] `GET /api/tasks?projectPath=/other/project` returns data for that project\n- [ ] Two projects with different tasks do not leak data between them\n- [ ] `venus start` initializes and serves the default project correctly\n- [ ] Tests in `tests/graph-connection-pool.test.ts` pass\n\n## Key files\n\n- `src/modules/graph.ts` — connection pool implementation\n- `src/web/server.ts` — `resolveProject()` and all API handlers\n- `src/modules/sync.ts` — sync still uses singleton, may need update\n- `tests/graph-connection-pool.test.ts` — new tests (currently failing)",
+      "source_material": null
+    }
+  ],
+  "stats": {
+    "rules": 0,
+    "conventions": 1,
+    "decisions": 0,
+    "documents": 0,
+    "issues": 0
+  },
+  "domains": [
+    "backend",
+    "implementation"
+  ],
+  "architecture": {
+    "directories": [
+      "scripts",
+      ".venusos/documents"
+    ],
+    "packageScripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint"
+    },
+    "knownModules": [
+      {
+        "name": "Scripts",
+        "paths": [
+          "scripts"
+        ],
+        "purpose": "Automation and maintenance scripts"
+      },
+      {
+        "name": "Documents",
+        "paths": [
+          ".venusos/documents"
+        ],
+        "purpose": "Structured knowledge documents"
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "name": "Initialize Project",
+      "commands": [
+        "venus init"
+      ],
+      "description": "Initialize a new Venus project"
+    },
+    {
+      "name": "Sync Knowledge",
+      "commands": [
+        "venus sync"
+      ],
+      "description": "Run the knowledge sync pipeline"
+    },
+    {
+      "name": "Generate Brief",
+      "commands": [
+        "venus brief"
+      ],
+      "description": "Generate the project brief"
+    },
+    {
+      "name": "MCP Integration",
+      "commands": [
+        "venus mcp"
+      ],
+      "description": "Start MCP server for agent integration"
+    }
+  ],
+  "pinnedRules": [],
+  "activeTasks": [],
+  "references": [
+    "CLAUDE.md",
+    ".venusos/.meta/config.json",
+    ".venusos/documents",
+    "package.json"
+  ]
+}
