@@ -1,0 +1,44 @@
+{
+  "agent": "pm",
+  "env": {
+    "AGENT_BROWSER_PROFILE": "~/.agent-browser-edge-profile",
+    "AGENT_BROWSER_EXECUTABLE": "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node scripts/hud/index.mjs"
+  },
+  "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/hud-agent-track.mjs start"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/hud-agent-track.mjs stop"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/post-commit-archaeologist.js"
+          }
+        ]
+      }
+    ]
+  }
+}

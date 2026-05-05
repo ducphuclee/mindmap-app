@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Code Cleaner Skeptic",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["findingId", "response", "analysisSummary"],
+    "properties": {
+      "findingId": { "type": "string", "pattern": "^CC-[0-9]+$" },
+      "response": { "type": "string", "enum": ["ACCEPT", "DISMISS", "MANUAL_REVIEW"] },
+      "analysisSummary": { "type": "string", "minLength": 1 },
+      "counterEvidence": { "type": ["string", "null"] }
+    },
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Code Cleaner Recon",
+  "type": "object",
+  "required": ["structuralClones", "redundantEntryPoints", "lowCohesionClusters", "gitnexusAvailable"],
+  "properties": {
+    "structuralClones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fn1", "path1", "fn2", "path2", "sharedCallees", "signal"],
+        "properties": {
+          "fn1": { "type": "string" },
+          "path1": { "type": "string" },
+          "fn2": { "type": "string" },
+          "path2": { "type": "string" },
+          "sharedCallees": { "type": "integer", "minimum": 0 },
+          "signal": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "redundantEntryPoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["caller", "callerPath", "fn1", "path1", "fn2", "path2", "signal"],
+        "properties": {
+          "caller": { "type": "string" },
+          "callerPath": { "type": "string" },
+          "fn1": { "type": "string" },
+          "path1": { "type": "string" },
+          "fn2": { "type": "string" },
+          "path2": { "type": "string" },
+          "signal": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "lowCohesionClusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cluster", "cohesionScore", "files"],
+        "properties": {
+          "cluster": { "type": "string" },
+          "cohesionScore": { "type": "number", "minimum": 0, "maximum": 1 },
+          "files": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gitnexusAvailable": { "type": "boolean" },
+    "limitation": { "type": "string" }
+  },
+  "additionalProperties": false
+}

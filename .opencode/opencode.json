@@ -1,0 +1,248 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "question": "deny"
+  },
+  "mcp": {
+    "venus": {
+      "type": "local",
+      "enabled": true,
+      "command": ["venus", "mcp"],
+      "env": {
+        "VENUS_PROJECT_PATH": "/Users/phucld/workspace/venus"
+      }
+    },
+    "ripgrep": {
+      "type": "local",
+      "enabled": true,
+      "command": [
+        "npx",
+        "-y",
+        "mcp-ripgrep@latest"
+      ]
+    },
+    "gitnexus": {
+      "type": "local",
+      "enabled": true,
+      "command": [
+        "gitnexus",
+        "mcp"
+      ]
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "enabled": true,
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  },
+  // "plugin": [
+  //   "oh-my-opencode-slim"
+  // ],
+  // "agent": {
+  //   "orchestrator": {
+  //     "mode": "primary",
+  //     "description": "PO & Coordinator (58 tools)",
+  //     "model": "zai-coding-plan/glm-4.7",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/orchestrator.md}",
+  //     "tools": {
+  //       "task": true,
+  //       "read": false,
+  //       "write": false,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "ripgrep_list-files": true,
+  //       "ripgrep_count-matches": true,
+  //       "chunkhound_search_semantic": true
+  //     },
+  //     "permission": {
+  //       "read": "deny",
+  //       "edit": "deny",
+  //       "bash": "deny",
+  //       "brainstorming": "allow",
+  //       "executing-plans": "allow",
+  //       "subagent-driven-development": "allow"
+  //     }
+  //   },
+  //   "solution-architector": {
+  //     "mode": "subagent",
+  //     "description": "Solution architector",
+  //     "model": "naga/gpt-5.3-codex",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": false,
+  //       "write": false,
+  //       "skill": false
+  //     }
+  //   },
+  //   "coder1": {
+  //     "mode": "subagent",
+  //     "description": "Python implementation",
+  //     "model": "alibaba/qwen3-coder-plus",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "coder2": {
+  //     "mode": "subagent",
+  //     "description": "Python implementation (Worker 1)",
+  //     "model": "byteplus/glm-4.7",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "coder3": {
+  //     "mode": "subagent",
+  //     "description": "Python implementation (Worker 2)",
+  //     "model": "zai-coding-plan/glm-4.7",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "coder4": {
+  //     "mode": "subagent",
+  //     "description": "Python implementation (Worker 3)",
+  //     "model": "zai-coding-plan/glm-4.7",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "coder5": {
+  //     "mode": "subagent",
+  //     "description": "Python implementation (Worker 2)",
+  //     "model": "naga/deepseek-v3.2",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/coder.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "reviewer": {
+  //     "mode": "subagent",
+  //     "description": "Senior Architect review",
+  //     "model": "github-copilot/gpt-4.1",
+  //     "prompt": "{file:./prompts/reviewer.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "skill": true,
+  //       "ripgrep_search": true
+  //     }
+  //   },
+  //   "checker": {
+  //     "mode": "subagent",
+  //     "description": "QA Inspector (ruff/mypy/pytest)",
+  //     "model": "github-copilot/gpt-4.1",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/checker.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "bash": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "ripgrep_count-matches": true
+  //     }
+  //   },
+  //   "explore": {
+  //     "mode": "subagent",
+  //     "description": "Codebase Navigator",
+  //     "model": "byteplus/gpt-oss-120b",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/explore.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "ripgrep_list-files": true,
+  //       "ripgrep_advanced-search": true,
+  //       "chunkhound_search_semantic": true
+  //     }
+  //   },
+  //   "librarian": {
+  //     "mode": "subagent",
+  //     "description": "Task & Knowledge Manager",
+  //     "model": "byteplus/gpt-oss-120b",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./prompts/librarian.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "write": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "forgetful_list_projects": true,
+  //       "forgetful_get_recent_memories": true
+  //     }
+  //   },
+  //   "devops": {
+  //     "mode": "subagent",
+  //     "description": "Deployment Agent - ONLY agent allowed to commit & push code",
+  //     "model": "github-copilot/gpt-4.1",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./agents/devops/system-prompt.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "bash": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "ripgrep_count-matches": true
+  //     }
+  //   },
+  //   "tester": {
+  //     "mode": "subagent",
+  //     "description": "Integration Testing Agent - runs tests on deployed instances",
+  //     "model": "github-copilot/gpt-4.1",
+  //     "temperature": 0.1,
+  //     "prompt": "{file:./agents/tester/system-prompt.md}",
+  //     "tools": {
+  //       "read": true,
+  //       "bash": true,
+  //       "skill": true,
+  //       "ripgrep_search": true,
+  //       "forgetful_get_current_user": true,
+  //       "forgetful_query_memory": true,
+  //       "forgetful_send_conversation": true,
+  //       "forgetful_get_recent_memories": true
+  //     }
+  //   }
+  // },
+  "instructions": [
+    "AGENTS.md"
+  ]
+  // ,
+  // "permission": {
+  //   "read": {
+  //     "/Users/phucld/workspace/graphiti/.opencode/get-shit-done/*": "allow"
+  //   },
+  //   "external_directory": {
+  //     "/Users/phucld/workspace/graphiti/.opencode/get-shit-done/*": "allow"
+  //   }
+  // }
+}

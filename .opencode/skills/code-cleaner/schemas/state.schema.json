@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Code Cleaner State",
+  "type": "object",
+  "required": ["schemaVersion", "lastRunAt", "lastCommit", "scanMode", "fileHashes", "stats"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "lastRunAt": { "type": "string" },
+    "lastCommit": { "type": ["string", "null"] },
+    "commitCount": { "type": "integer", "minimum": 0 },
+    "scanMode": { "type": "string", "enum": ["full", "incremental"] },
+    "fileHashes": { "type": "object", "additionalProperties": { "type": "string" } },
+    "confirmedFindingIds": { "type": "array", "items": { "type": "string" } },
+    "venusInsightIds": { "type": "array", "items": { "type": "string" } },
+    "venusIssueIds": { "type": "array", "items": { "type": "string" } },
+    "stats": {
+      "type": "object",
+      "required": ["totalConfirmed", "totalDismissed", "estimatedDuplicateLines"],
+      "properties": {
+        "totalConfirmed": { "type": "integer" },
+        "totalDismissed": { "type": "integer" },
+        "estimatedDuplicateLines": { "type": "integer" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

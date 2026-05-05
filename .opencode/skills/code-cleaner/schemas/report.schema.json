@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Code Cleaner Report",
+  "type": "object",
+  "required": ["version", "scanId", "scanDate", "mode", "target",
+               "filesScanned", "confirmed", "dismissed", "summary"],
+  "properties": {
+    "version": { "type": "string" },
+    "scanId": { "type": "string" },
+    "scanDate": { "type": "string" },
+    "mode": { "type": "string", "enum": ["full", "incremental"] },
+    "target": { "type": "string" },
+    "filesScanned": { "type": "integer", "minimum": 0 },
+    "confirmed": { "type": "array" },
+    "dismissed": { "type": "array" },
+    "manualReview": { "type": "array" },
+    "summary": {
+      "type": "object",
+      "required": ["totalReported", "confirmed", "dismissed", "byCategory", "bySeverity", "estimatedDuplicateLines"],
+      "properties": {
+        "totalReported": { "type": "integer" },
+        "confirmed": { "type": "integer" },
+        "dismissed": { "type": "integer" },
+        "byCategory": {
+          "type": "object",
+          "properties": {
+            "exact-duplicate": { "type": "integer" },
+            "near-duplicate": { "type": "integer" },
+            "redundant-wrapper": { "type": "integer" },
+            "dead-code": { "type": "integer" },
+            "overlapping-logic": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "bySeverity": {
+          "type": "object",
+          "properties": {
+            "High": { "type": "integer" },
+            "Medium": { "type": "integer" },
+            "Low": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "estimatedDuplicateLines": { "type": "integer" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

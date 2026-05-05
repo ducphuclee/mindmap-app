@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Code Cleaner Findings",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["findingId", "category", "severity", "title", "claim",
+                 "evidence", "affectedFiles", "signalSource", "confidenceScore"],
+    "properties": {
+      "findingId": { "type": "string", "pattern": "^CC-[0-9]+$" },
+      "category": {
+        "type": "string",
+        "enum": ["exact-duplicate", "near-duplicate", "redundant-wrapper", "dead-code", "overlapping-logic"]
+      },
+      "severity": { "type": "string", "enum": ["High", "Medium", "Low"] },
+      "title": { "type": "string", "minLength": 1 },
+      "claim": { "type": "string", "minLength": 1 },
+      "evidence": { "type": "string", "minLength": 1 },
+      "affectedFiles": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+      "affectedSymbols": { "type": "array", "items": { "type": "string" } },
+      "estimatedDuplicationLines": { "type": "integer", "minimum": 0 },
+      "signalSource": {
+        "type": "string",
+        "enum": ["exact-hash", "similar-name", "near-clone", "structural-clone",
+                 "dead-export", "unreachable-file", "redundant-entry", "llm-detected"]
+      },
+      "confidenceScore": { "type": "number", "minimum": 0, "maximum": 100 },
+      "confidenceLabel": { "type": "string", "enum": ["high", "medium", "low"] },
+      "actionableNote": { "type": "string" }
+    },
+    "additionalProperties": false
+  }
+}
