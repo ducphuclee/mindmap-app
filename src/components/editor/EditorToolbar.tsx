@@ -20,16 +20,16 @@ export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId
   const [showShare, setShowShare] = useState(false);
 
   return (
-    <div className="relative flex items-center gap-1 border-b border-gray-200 bg-white px-4 py-1">
+    <div className="relative flex items-center gap-1 border-b border-[rgba(214,235,253,0.19)] bg-black px-4 py-1">
       <LayoutSwitcher current={currentLayout} onChange={onLayoutChange} />
 
-      <div className="mx-2 h-5 w-px bg-gray-200" />
+      <div className="mx-2 h-5 w-px bg-[rgba(214,235,253,0.19)]" />
 
       <button
         type="button"
         onClick={onFitView}
         title="Fit to screen"
-        className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-100"
+        className="flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-xs text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]"
       >
         <svg
           className="h-4 w-4"
@@ -52,7 +52,7 @@ export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId
           type="button"
           onClick={onCreateHub}
           title="Create Hub"
-          className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-100"
+          className="flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-xs text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]"
         >
           <svg
             className="h-4 w-4"
@@ -75,7 +75,7 @@ export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId
         type="button"
         disabled
         title="Export (coming soon)"
-        className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-gray-400 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed"
+        className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-[#464a4d] disabled:cursor-not-allowed"
       >
         <svg
           className="h-4 w-4"
@@ -98,7 +98,7 @@ export default function EditorToolbar({ currentLayout, onLayoutChange, mindmapId
           type="button"
           onClick={() => setShowShare((prev) => !prev)}
           title="Share"
-          className="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-100"
+          className="flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-xs text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]"
         >
           <svg
             className="h-4 w-4"

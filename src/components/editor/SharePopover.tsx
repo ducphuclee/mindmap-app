@@ -71,16 +71,16 @@ export default function SharePopover({ mindmapId, isPublic, slug, onClose }: Sha
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-full z-50 mt-1 w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
+      className="absolute right-0 top-full z-50 mt-1 w-80 rounded-[12px] border border-[rgba(214,235,253,0.19)] bg-black p-4 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px]"
     >
-      <h3 className="mb-3 text-sm font-semibold text-gray-800">Share Mindmap</h3>
+      <h3 className="mb-3 text-sm font-semibold text-[#f0f0f0]">Share Mindmap</h3>
 
       {!shareUrl ? (
         <button
           type="button"
           onClick={handleGenerate}
           disabled={loading}
-          className="w-full rounded bg-blue-600 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+          className="w-full rounded-[9999px] border border-[rgba(214,235,253,0.19)] bg-transparent px-3 py-2 text-sm text-[#f0f0f0] transition-colors hover:bg-[rgba(255,255,255,0.28)] disabled:opacity-50"
         >
           {loading ? 'Generating...' : 'Generate share link'}
         </button>
@@ -91,12 +91,12 @@ export default function SharePopover({ mindmapId, isPublic, slug, onClose }: Sha
               type="text"
               readOnly
               value={shareUrl}
-              className="min-w-0 flex-1 rounded border border-gray-300 bg-gray-50 px-2 py-1.5 text-xs text-gray-600"
+              className="min-w-0 flex-1 rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black px-2 py-1.5 text-xs text-[#f0f0f0]"
             />
             <button
               type="button"
               onClick={handleCopy}
-              className="shrink-0 rounded bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+              className="shrink-0 rounded-[9999px] border border-[rgba(214,235,253,0.19)] bg-transparent px-3 py-1.5 text-xs font-medium text-[#f0f0f0] transition-colors hover:bg-[rgba(255,255,255,0.28)]"
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>
@@ -107,7 +107,7 @@ export default function SharePopover({ mindmapId, isPublic, slug, onClose }: Sha
               type="button"
               onClick={handleRevoke}
               disabled={loading}
-              className="w-full rounded border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+              className="w-full rounded-[9999px] border border-[rgba(214,235,253,0.19)] px-3 py-1.5 text-xs font-medium text-[#ff2047] transition-colors hover:bg-[rgba(255,32,71,0.08)] disabled:opacity-50"
             >
               {loading ? 'Revoking...' : 'Revoke link'}
             </button>

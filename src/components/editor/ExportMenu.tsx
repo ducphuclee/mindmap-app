@@ -41,13 +41,13 @@ export default function ExportMenu({ onClose }: ExportMenuProps) {
   return (
     <div
       ref={menuRef}
-      className="absolute right-0 top-full z-50 mt-1 w-44 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg"
+      className="absolute right-0 top-full z-50 mt-1 w-44 overflow-hidden rounded-[12px] border border-[rgba(214,235,253,0.19)] bg-black py-1 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px]"
     >
       <button
         type="button"
         disabled={loading === 'png'}
         onClick={() => handleExport('png')}
-        className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading === 'png' ? spinner : exportIcon}
         Export as PNG
@@ -56,7 +56,7 @@ export default function ExportMenu({ onClose }: ExportMenuProps) {
         type="button"
         disabled={loading === 'pdf'}
         onClick={() => handleExport('pdf')}
-        className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading === 'pdf' ? spinner : pdfIcon}
         Export as PDF
@@ -67,7 +67,7 @@ export default function ExportMenu({ onClose }: ExportMenuProps) {
 
 const spinner = (
   <svg
-    className="h-4 w-4 animate-spin text-gray-500"
+    className="h-4 w-4 animate-spin text-[#a1a4a5]"
     fill="none"
     viewBox="0 0 24 24"
   >

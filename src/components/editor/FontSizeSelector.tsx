@@ -13,7 +13,7 @@ const SIZES: { key: 'sm' | 'md' | 'lg'; label: string }[] = [
 
 export default function FontSizeSelector({ value = 'md', onChange }: FontSizeSelectorProps) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5 rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black px-0.5">
       {SIZES.map(({ key, label }) => (
         <button
           key={key}
@@ -21,8 +21,8 @@ export default function FontSizeSelector({ value = 'md', onChange }: FontSizeSel
           onClick={() => onChange(key)}
           className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
             value === key
-              ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-600 hover:bg-gray-100'
+              ? 'bg-[rgba(255,255,255,0.1)] text-[#f0f0f0]'
+              : 'text-[#a1a4a5] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]'
           }`}
         >
           {label}

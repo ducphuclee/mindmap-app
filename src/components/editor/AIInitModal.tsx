@@ -74,7 +74,7 @@ export default function AIInitModal({ isOpen, onClose, onApply }: AIInitModalPro
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/50" />
+          <div className="fixed inset-0 bg-black/70" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -88,25 +88,25 @@ export default function AIInitModal({ isOpen, onClose, onApply }: AIInitModalPro
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all dark:bg-gray-800">
-                <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[24px] border border-[rgba(214,235,253,0.19)] bg-black p-6 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px] transition-all">
+                <Dialog.Title as="h3" className="text-lg font-semibold text-[#f0f0f0]">
                   Generate Mindmap
                 </Dialog.Title>
 
-                <Dialog.Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <Dialog.Description className="mt-2 text-sm text-[#a1a4a5]">
                   Describe the mindmap you want to create. The AI will generate nodes and connections based on your input.
                 </Dialog.Description>
 
                 <form onSubmit={handleSubmit} className="mt-4">
                   <div
-                    className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 p-4 mb-3 text-sm text-gray-500 dark:border-gray-600 dark:text-gray-400"
+                    className="flex flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-[rgba(214,235,253,0.19)] p-4 mb-3 text-sm text-[#a1a4a5]"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={handleDrop}
                   >
                     Drop .txt, .md, or .pdf
                   </div>
                   <textarea
-                    className="w-full rounded-md border border-gray-300 bg-white p-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+                    className="w-full rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black p-3 text-sm text-[#f0f0f0] placeholder-[#464a4d] focus:border-[#3b9eff] focus:outline-none focus:ring-1 focus:ring-[#3b9eff]"
                     rows={5}
                     placeholder="e.g. Create a mindmap about renewable energy sources with main categories: solar, wind, hydro"
                     value={text}
@@ -114,13 +114,13 @@ export default function AIInitModal({ isOpen, onClose, onApply }: AIInitModalPro
                   />
 
                   {error && (
-                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
+                    <p className="mt-2 text-sm text-[#ff2047]">{error}</p>
                   )}
 
                   <div className="mt-6 flex justify-end gap-3">
                     <button
                       type="button"
-                      className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                      className="rounded-[9999px] border border-[rgba(214,235,253,0.19)] bg-transparent px-4 py-2 text-sm font-medium text-[#f0f0f0] transition-colors hover:bg-[rgba(255,255,255,0.28)]"
                       onClick={onClose}
                     >
                       Close
@@ -128,10 +128,10 @@ export default function AIInitModal({ isOpen, onClose, onApply }: AIInitModalPro
                     <button
                       type="submit"
                       disabled={!canSubmit}
-                      className={`rounded-md px-4 py-2 text-sm font-medium text-white ${
+                      className={`rounded-[9999px] px-4 py-2 text-sm font-medium text-white transition-colors ${
                         canSubmit
-                          ? 'bg-blue-600 hover:bg-blue-700'
-                          : 'bg-blue-400 cursor-not-allowed'
+                          ? 'border border-[rgba(214,235,253,0.19)] bg-transparent hover:bg-[rgba(255,255,255,0.28)]'
+                          : 'border border-[rgba(214,235,253,0.19)] bg-transparent cursor-not-allowed opacity-50'
                       }`}
                     >
                       {isLoading ? 'Generating...' : 'Submit'}

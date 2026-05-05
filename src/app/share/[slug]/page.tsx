@@ -11,10 +11,10 @@ export default async function SharePage({ params }: SharePageProps) {
 
   if (!mindmap) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-black">
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-gray-800">Not Found</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <h1 className="text-xl font-semibold text-[#f0f0f0]">Not Found</h1>
+          <p className="mt-2 text-sm text-[#a1a4a5]">
             This mindmap is no longer available.
           </p>
         </div>

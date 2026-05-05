@@ -38,12 +38,12 @@ export default function ColorPicker({ value, onChange, label }: ColorPickerProps
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="h-6 w-6 rounded border border-gray-300"
+        className="h-6 w-6 rounded border border-[rgba(214,235,253,0.19)]"
         style={{ backgroundColor: value || '#FFFFFF' }}
         title={label}
       />
       {open && (
-        <div className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+        <div className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-[12px] border border-[rgba(214,235,253,0.19)] bg-black p-2 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px]">
           <div className="grid grid-cols-8 gap-1">
             {PRESET_COLORS.map((color) => (
               <button
@@ -54,7 +54,7 @@ export default function ColorPicker({ value, onChange, label }: ColorPickerProps
                   setOpen(false);
                 }}
                 className={`h-5 w-5 rounded border ${
-                  value === color ? 'ring-2 ring-blue-500' : 'border-gray-200'
+                  value === color ? 'ring-2 ring-[#3b9eff]' : 'border-[rgba(214,235,253,0.19)]'
                 }`}
                 style={{ backgroundColor: color }}
               />

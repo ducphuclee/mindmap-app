@@ -38,7 +38,7 @@ export default function BaseModal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/50" />
+          <div className="fixed inset-0 bg-black/70" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -52,13 +52,13 @@ export default function BaseModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all dark:bg-gray-800">
-                <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-large border border-frost bg-black p-6 shadow-ring transition-all">
+                <Dialog.Title as="h3" className="text-lg font-semibold text-near-white font-heading">
                   {title}
                 </Dialog.Title>
 
                 {description && (
-                  <Dialog.Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  <Dialog.Description className="mt-2 text-sm text-silver">
                     {description}
                   </Dialog.Description>
                 )}
@@ -68,7 +68,7 @@ export default function BaseModal({
                 <div className="mt-6 flex justify-end gap-3">
                   <button
                     type="button"
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                    className="rounded-pill border border-frost px-4 py-2 text-sm font-medium text-near-white"
                     onClick={onClose}
                   >
                     Cancel
@@ -77,10 +77,10 @@ export default function BaseModal({
                   {onSubmit && (
                     <button
                       type="button"
-                      className={`rounded-md px-4 py-2 text-sm font-medium text-white ${
+                      className={`rounded-pill px-4 py-2 text-sm font-medium ${
                         isDangerous
-                          ? 'bg-red-600 hover:bg-red-700'
-                          : 'bg-blue-600 hover:bg-blue-700'
+                          ? 'border border-[rgba(255,32,71,0.3)] bg-[rgba(255,32,71,0.15)] text-red-5'
+                          : 'bg-white text-black'
                       } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={onSubmit}
                       disabled={isLoading}

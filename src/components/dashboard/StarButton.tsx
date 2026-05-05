@@ -13,10 +13,10 @@ export default function StarButton({ mindmapId, isStarred, onToggle }: Props) {
         e.stopPropagation();
         onToggle(mindmapId);
       }}
-      className={`absolute right-2 top-2 z-10 rounded-full p-1 text-lg transition-opacity ${
+      className={`absolute right-2 top-2 z-10 rounded-full p-1 text-lg transition-colors ${
         isStarred
-          ? 'text-yellow-400 opacity-100 dark:text-yellow-400'
-          : 'text-gray-400 opacity-0 group-hover:opacity-100 hover:text-yellow-400 dark:text-gray-500'
+          ? 'text-yellow-9'
+          : 'text-dark-gray opacity-0 group-hover:opacity-100 hover:text-yellow-9'
       }`}
       aria-label={isStarred ? 'Unstar' : 'Star'}
     >

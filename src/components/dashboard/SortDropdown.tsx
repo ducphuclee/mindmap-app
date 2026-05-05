@@ -12,11 +12,11 @@ export default function SortDropdown({ value, onChange }: Props) {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value as SortOption)}
-      className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+      className="rounded-sharp border border-frost bg-black px-3 py-2 text-sm text-near-white focus:border-blue-10 focus:outline-none"
     >
-      <option value="last-modified">Last modified</option>
-      <option value="title-asc">Title A-Z</option>
-      <option value="title-desc">Title Z-A</option>
+      <option className="text-silver" value="last-modified">Last modified</option>
+      <option className="text-silver" value="title-asc">Title A-Z</option>
+      <option className="text-silver" value="title-desc">Title Z-A</option>
     </select>
   );
 }
