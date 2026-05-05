@@ -245,6 +245,7 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
+                data-testid={msg.role === 'assistant' ? 'ai-message' : 'user-message'}
                 className={`max-w-[85%] rounded-[12px] px-3 py-2 text-sm ${
                   msg.role === 'user'
                     ? 'bg-[#3b9eff] text-white'
