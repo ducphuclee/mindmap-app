@@ -13,18 +13,11 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  const [mindmaps, count] = await Promise.all([
-    MindmapRepository.findByUserId(user.id),
-    MindmapRepository.countByUserId(user.id),
-  ]);
-
-  // isPro is hardcoded false — no billing integration yet
-  // Note: add is_pro BOOLEAN DEFAULT false to profiles table when billing is integrated
-  const isPro = false;
+  const mindmaps = await MindmapRepository.findByUserId(user.id);
 
   return (
     <div className="min-h-screen bg-black">
-      <MindmapGrid initialMindmaps={mindmaps} count={count} isPro={isPro} currentUserId={user.id} />
+      <MindmapGrid initialMindmaps={mindmaps} currentUserId={user.id} />
     </div>
   );
 }

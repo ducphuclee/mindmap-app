@@ -20,7 +20,7 @@ interface LayoutSwitcherProps {
 
 export default function LayoutSwitcher({ current, onChange }: LayoutSwitcherProps) {
   return (
-    <div className="flex items-center gap-1 rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black px-1">
+    <div className="flex items-center gap-1 rounded-[8px] border border-gray-200 bg-white px-1">
       {LAYOUT_OPTIONS.map((opt) => (
         <button
           key={opt.value}
@@ -28,8 +28,8 @@ export default function LayoutSwitcher({ current, onChange }: LayoutSwitcherProp
           onClick={() => onChange(opt.value)}
           className={`rounded px-3 py-1.5 text-xs font-medium transition-colors ${
             current === opt.value
-              ? 'bg-[rgba(255,255,255,0.1)] text-[#f0f0f0]'
-              : 'text-[#a1a4a5] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]'
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
           }`}
         >
           {opt.label}

@@ -50,6 +50,12 @@ export interface MindmapData {
   layoutType?: 'radial' | 'tree-td' | 'tree-lr';
 }
 
+export interface MindmapNodeExtraProps {
+  onExpand?: (nodeId: string) => void;
+  expandingNodeId?: string;
+  onSendToChat?: (nodeId: string) => void;
+}
+
 export interface Mindmap {
   id: string;
   user_id: string;

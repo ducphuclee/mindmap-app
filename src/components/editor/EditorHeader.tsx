@@ -13,17 +13,17 @@ function SaveIndicator({ status }: { status: SaveStatus }) {
   if (status === 'idle') return null;
   if (status === 'saving') {
     return (
-      <span className="text-xs text-[#a1a4a5]">Saving...</span>
+      <span className="text-xs text-gray-500">Saving...</span>
     );
   }
   if (status === 'saved') {
     return (
-      <span className="text-xs text-[#11ff99]">Saved ✓</span>
+      <span className="text-xs text-green-600">Saved ✓</span>
     );
   }
   if (status === 'error') {
     return (
-      <span className="text-xs text-[#ff2047]">Save failed</span>
+      <span className="text-xs text-red-500">Save failed</span>
     );
   }
   return null;
@@ -31,11 +31,11 @@ function SaveIndicator({ status }: { status: SaveStatus }) {
 
 export default function EditorHeader({ title, saveStatus }: EditorHeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-between border-b border-[rgba(214,235,253,0.19)] bg-black px-4">
+    <header className="flex h-12 items-center justify-between border-b border-gray-200 bg-white px-4">
       <div className="flex items-center gap-3">
         <Link
           href="/dashboard"
-          className="rounded-[4px] p-1 text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]"
+          className="rounded-[4px] p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
           aria-label="Back to dashboard"
         >
           <svg
@@ -52,7 +52,7 @@ export default function EditorHeader({ title, saveStatus }: EditorHeaderProps) {
             />
           </svg>
         </Link>
-        <h1 className="max-w-xs truncate text-sm font-semibold text-[#f0f0f0]">
+        <h1 className="max-w-xs truncate text-sm font-semibold text-gray-900">
           {title}
         </h1>
       </div>

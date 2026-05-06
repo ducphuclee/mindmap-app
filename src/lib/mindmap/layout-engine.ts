@@ -5,7 +5,8 @@ export type LayoutType = 'radial' | 'tree-td' | 'tree-lr';
 
 const NODE_WIDTH = 160;
 const NODE_HEIGHT = 50;
-const RADIAL_RADIUS = 200;
+const HORIZONTAL_GAP = 80;
+const VERTICAL_GAP = 24;
 
 function buildChildrenMap(
   edges: MindmapEdge[],
@@ -35,21 +36,62 @@ function findRoot(
   return nodes.find((n) => !parentMap.has(n.id))?.id ?? nodes[0].id;
 }
 
-function countSubtree(
+function computeSubtreeHeight(
   nodeId: string,
   childrenMap: Map<string, string[]>,
+  nodeHeights: Map<string, number>,
   memo: Map<string, number>,
 ): number {
   if (memo.has(nodeId)) return memo.get(nodeId)!;
-  let count = 1;
-  for (const child of childrenMap.get(nodeId) ?? []) {
-    count += countSubtree(child, childrenMap, memo);
+  const children = childrenMap.get(nodeId) ?? [];
+  if (children.length === 0) {
+    const h = nodeHeights.get(nodeId) ?? NODE_HEIGHT;
+    memo.set(nodeId, h);
+    return h;
   }
-  memo.set(nodeId, count);
-  return count;
+  const childrenTotal = children.reduce(
+    (sum, child) => sum + computeSubtreeHeight(child, childrenMap, nodeHeights, memo),
+    0,
+  );
+  const result = Math.max(
+    nodeHeights.get(nodeId) ?? NODE_HEIGHT,
+    childrenTotal + VERTICAL_GAP * (children.length - 1),
+  );
+  memo.set(nodeId, result);
+  return result;
 }
 
-function applyRadialLayout(
+function layoutBranch(
+  nodeId: string,
+  cx: number,
+  cy: number,
+  direction: 1 | -1,
+  childrenMap: Map<string, string[]>,
+  nodeWidths: Map<string, number>,
+  subtreeHeights: Map<string, number>,
+  positions: Map<string, { x: number; y: number }>,
+): void {
+  positions.set(nodeId, { x: cx, y: cy });
+  const children = childrenMap.get(nodeId) ?? [];
+  if (children.length === 0) return;
+
+  const nw = nodeWidths.get(nodeId) ?? NODE_WIDTH;
+  const childX = cx + direction * (nw / 2 + HORIZONTAL_GAP);
+
+  const totalH =
+    children.reduce((sum, child) => sum + (subtreeHeights.get(child) ?? NODE_HEIGHT), 0) +
+    VERTICAL_GAP * (children.length - 1);
+  let startY = cy - totalH / 2;
+
+  for (const child of children) {
+    const childH = subtreeHeights.get(child) ?? NODE_HEIGHT;
+    const childCY = startY + childH / 2;
+    layoutBranch(child, childX, childCY, direction, childrenMap, nodeWidths, subtreeHeights, positions);
+    startY += childH + VERTICAL_GAP;
+  }
+}
+
+function applyXMindLayout(
   nodes: MindmapNode[],
   edges: MindmapEdge[],
 ): MindmapNode[] {
@@ -57,55 +99,92 @@ function applyRadialLayout(
   const parentMap = buildParentMap(edges);
   const rootId = findRoot(nodes, parentMap);
 
-  const subtreeCounts = new Map<string, number>();
-  countSubtree(rootId, childrenMap, subtreeCounts);
+  const nodeWidths = new Map<string, number>();
+  const nodeHeights = new Map<string, number>();
+  for (const n of nodes) {
+    nodeWidths.set(n.id, n.width ?? NODE_WIDTH);
+    nodeHeights.set(n.id, n.height ?? NODE_HEIGHT);
+  }
 
-  const levels = new Map<string, number>();
-  function assignLevel(nodeId: string, level: number) {
-    levels.set(nodeId, level);
-    for (const child of childrenMap.get(nodeId) ?? []) {
-      assignLevel(child, level + 1);
+  const subtreeHeights = new Map<string, number>();
+  for (const n of nodes) {
+    computeSubtreeHeight(n.id, childrenMap, nodeHeights, subtreeHeights);
+  }
+
+  const rootChildren = childrenMap.get(rootId) ?? [];
+  const rightChildren: string[] = [];
+  const leftChildren: string[] = [];
+  for (let i = 0; i < rootChildren.length; i++) {
+    if (i % 2 === 0) {
+      rightChildren.push(rootChildren[i]);
+    } else {
+      leftChildren.push(rootChildren[i]);
     }
   }
-  assignLevel(rootId, 0);
 
   const positions = new Map<string, { x: number; y: number }>();
   positions.set(rootId, { x: 0, y: 0 });
 
-  function layoutNode(nodeId: string, angleStart: number, angleEnd: number) {
-    const children = childrenMap.get(nodeId) ?? [];
-    if (children.length === 0) return;
+  const rootW = nodeWidths.get(rootId) ?? NODE_WIDTH;
 
-    const parentTotal = subtreeCounts.get(nodeId) ?? 1;
-    const childrenTotal = parentTotal - 1;
-    if (childrenTotal <= 0) return;
-
-    let currentAngle = angleStart;
-
-    for (const child of children) {
-      const childCount = subtreeCounts.get(child) ?? 1;
-      const fraction = childCount / childrenTotal;
-      const span = (angleEnd - angleStart) * fraction;
-      const midAngle = currentAngle + span / 2;
-
-      const level = levels.get(child) ?? 1;
-      const radius = level * RADIAL_RADIUS;
-      positions.set(child, {
-        x: radius * Math.cos(midAngle),
-        y: radius * Math.sin(midAngle),
-      });
-
-      layoutNode(child, currentAngle, currentAngle + span);
-      currentAngle += span;
+  // Layout right side
+  if (rightChildren.length > 0) {
+    const rightTotalH =
+      rightChildren.reduce((sum, child) => sum + (subtreeHeights.get(child) ?? NODE_HEIGHT), 0) +
+      VERTICAL_GAP * (rightChildren.length - 1);
+    let startY = -rightTotalH / 2;
+    for (const child of rightChildren) {
+      const childH = subtreeHeights.get(child) ?? NODE_HEIGHT;
+      layoutBranch(
+        child,
+        rootW / 2 + HORIZONTAL_GAP,
+        startY + childH / 2,
+        1,
+        childrenMap,
+        nodeWidths,
+        subtreeHeights,
+        positions,
+      );
+      startY += childH + VERTICAL_GAP;
     }
   }
 
-  layoutNode(rootId, 0, 2 * Math.PI);
+  // Layout left side
+  if (leftChildren.length > 0) {
+    const leftTotalH =
+      leftChildren.reduce((sum, child) => sum + (subtreeHeights.get(child) ?? NODE_HEIGHT), 0) +
+      VERTICAL_GAP * (leftChildren.length - 1);
+    let startY = -leftTotalH / 2;
+    for (const child of leftChildren) {
+      const childH = subtreeHeights.get(child) ?? NODE_HEIGHT;
+      layoutBranch(
+        child,
+        -(rootW / 2 + HORIZONTAL_GAP),
+        startY + childH / 2,
+        -1,
+        childrenMap,
+        nodeWidths,
+        subtreeHeights,
+        positions,
+      );
+      startY += childH + VERTICAL_GAP;
+    }
+  }
 
-  return nodes.map((n) => ({
-    ...n,
-    position: positions.get(n.id) ?? n.position,
-  }));
+  // Convert center-based positions to top-left for ReactFlow
+  return nodes.map((n) => {
+    const pos = positions.get(n.id);
+    if (!pos) return n;
+    const w = nodeWidths.get(n.id) ?? NODE_WIDTH;
+    const h = nodeHeights.get(n.id) ?? NODE_HEIGHT;
+    return {
+      ...n,
+      position: {
+        x: pos.x - w / 2,
+        y: pos.y - h / 2,
+      },
+    };
+  });
 }
 
 function applyTreeLayout(
@@ -115,7 +194,7 @@ function applyTreeLayout(
 ): MindmapNode[] {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: rankDir, nodesep: 80, ranksep: 150 });
+  g.setGraph({ rankdir: rankDir, nodesep: 60, ranksep: 120 });
 
   for (const node of nodes) {
     g.setNode(node.id, {
@@ -152,7 +231,7 @@ export function applyLayout(
 
   switch (type) {
     case 'radial':
-      return applyRadialLayout(nodes, edges);
+      return applyXMindLayout(nodes, edges);
     case 'tree-td':
       return applyTreeLayout(nodes, edges, 'TB');
     case 'tree-lr':

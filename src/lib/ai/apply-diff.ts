@@ -27,8 +27,12 @@ export function applyDiff(
   for (const op of diff.ops) {
     switch (op.type) {
       case 'add_node': {
+        let nodeId = op.id;
+        if (resultNodes.some((n) => n.id === nodeId)) {
+          nodeId = `${nodeId}-${Date.now()}`;
+        }
         const newNode: MindmapNode = {
-          id: op.id,
+          id: nodeId,
           position: { ...op.position },
           data: { label: op.data.label, ...(op.data as Record<string, unknown>) },
           ...(op.parentId ? { parentId: op.parentId } : {}),

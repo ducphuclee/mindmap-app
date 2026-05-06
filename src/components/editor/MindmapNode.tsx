@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { memo, useState, useRef, useEffect, useCallback } from 'react';
 import {
   Handle,
   Position,
@@ -8,7 +8,7 @@ import {
   type NodeProps,
   type Node,
 } from '@xyflow/react';
-import type { MindmapNodeData } from '@/types/mindmap';
+import type { MindmapNodeData, MindmapNodeExtraProps } from '@/types/mindmap';
 import NodeToolbar from './NodeToolbar';
 
 const FONT_SIZE_CLASSES: Record<string, string> = {
@@ -17,13 +17,7 @@ const FONT_SIZE_CLASSES: Record<string, string> = {
   lg: 'text-lg',
 };
 
-interface MindmapNodeExtraProps {
-  onExpand?: (nodeId: string) => void;
-  expandingNodeId?: string;
-  onSendToChat?: (nodeLabel: string) => void;
-}
-
-export default function MindmapNode({
+function MindmapNode({
   id,
   data,
   selected,
@@ -34,7 +28,7 @@ export default function MindmapNode({
   const { updateNodeData } = useReactFlow();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(data.label);
-  const [isHovered, setIsHovered] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -43,18 +37,23 @@ export default function MindmapNode({
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 10);
+      return () => clearTimeout(timer);
     }
   }, [isEditing]);
 
   useEffect(() => {
     if (data.autoEditId === id) {
-      requestAnimationFrame(() => {
+      const timer = setTimeout(() => {
         setIsEditing(true);
-      });
+        updateNodeData(id, { autoEditId: undefined });
+      }, 50);
+      return () => clearTimeout(timer);
     }
-  }, [data.autoEditId, id]);
+  }, [data.autoEditId, id, updateNodeData]);
 
   const commitEdit = useCallback(() => {
     const trimmed = editValue.trim();
@@ -89,12 +88,19 @@ export default function MindmapNode({
   return (
     <>
       {selected && (
-        <NodeToolbar nodeId={id} data={data} updateNodeData={updateNodeData} />
+        <NodeToolbar
+          nodeId={id}
+          data={data}
+          updateNodeData={updateNodeData}
+          onSendToChat={onSendToChat}
+          onExpand={onExpand}
+          isExpanding={isExpanding}
+        />
       )}
       <div
         onDoubleClick={handleDoubleClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+
+
         className={[
           'min-w-[120px] max-w-[240px] cursor-pointer rounded-xl px-4 py-2 shadow-md',
           'border-2 transition-colors relative',
@@ -137,22 +143,10 @@ export default function MindmapNode({
           </span>
         )}
 
-        {isHovered && !isEditing && (
-          <div className="nodrag absolute -top-4 right-0 flex gap-0.5">
-            <button
-              onClick={() => onSendToChat?.(data.label)}
-              className="rounded-full bg-green-500 px-1.5 py-0.5 text-[10px] leading-none text-white shadow hover:bg-green-600 transition-colors whitespace-nowrap"
-            >
-              Send to chat
-            </button>
-            <button
-              onClick={() => onExpand?.(id)}
-              className={`rounded-full bg-purple-500 px-1.5 py-0.5 text-[10px] leading-none text-white shadow hover:bg-purple-600 transition-colors whitespace-nowrap ${isExpanding ? 'opacity-50 cursor-wait' : ''}`}
-              disabled={isExpanding}
-            >
-              {isExpanding ? '...' : 'Expand'}
-            </button>
-          </div>
+        {!isEditing && (
+          <span className="block text-center text-[9px] text-gray-400 truncate mt-0.5 font-mono">
+            {id}
+          </span>
         )}
 
         <Handle
@@ -164,3 +158,5 @@ export default function MindmapNode({
     </>
   );
 }
+
+export default memo(MindmapNode);

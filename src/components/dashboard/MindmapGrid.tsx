@@ -51,13 +51,11 @@ const SORT_LOOKUP: Record<SortOption, SortFn> = {
 
 interface Props {
   initialMindmaps: Mindmap[];
-  count: number;
-  isPro: boolean;
   isLoading?: boolean;
   currentUserId: string;
 }
 
-export default function MindmapGrid({ initialMindmaps, count, isPro, isLoading, currentUserId }: Props) {
+export default function MindmapGrid({ initialMindmaps, isLoading, currentUserId }: Props) {
   const router = useRouter();
   const [mindmaps, setMindmaps] = useState<Mindmap[]>(initialMindmaps);
   const [search, setSearch] = useState('');
@@ -173,9 +171,9 @@ export default function MindmapGrid({ initialMindmaps, count, isPro, isLoading, 
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="font-heading text-2xl text-[#f0f0f0]">My Mindmaps</h1>
-          <UsageBadge count={count} isPro={isPro} />
+          <UsageBadge />
         </div>
-        <CreateButton onClick={handleCreate} count={count} isPro={isPro} />
+        <CreateButton onClick={handleCreate} />
       </div>
 
       <div className="mb-4 flex items-center gap-2">

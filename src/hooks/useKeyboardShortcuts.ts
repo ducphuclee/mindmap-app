@@ -54,7 +54,7 @@ export function useKeyboardShortcuts({
       id: childId,
       type: 'mindmapNode',
       position: { x: parent.position.x + 200, y: parent.position.y + 80 },
-      data: { label: 'New Node' },
+      data: { label: 'New Node', autoEditId: childId },
       selected: false,
     };
     const childEdge: Edge = {
@@ -86,7 +86,7 @@ export function useKeyboardShortcuts({
       id: siblingId,
       type: 'mindmapNode',
       position: { x: sibling.position.x, y: sibling.position.y + 100 },
-      data: { label: 'New Node' },
+      data: { label: 'New Node', autoEditId: siblingId },
       selected: false,
     };
 

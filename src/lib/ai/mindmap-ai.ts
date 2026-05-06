@@ -71,10 +71,32 @@ export async function generateFromText(text: string): Promise<MindmapData> {
         throw new Error('Invalid response: nodes array is required');
       }
 
-      return {
-        nodes: parsed.nodes as MindmapNode[],
-        edges: (parsed.edges ?? []) as MindmapEdge[],
-      };
+      const seenCount = new Map<string, number>();
+      const dedupedNodes: MindmapNode[] = [];
+      const idMap = new Map<string, string>();
+
+      for (const node of parsed.nodes as MindmapNode[]) {
+        const origId = node.id;
+        const count = seenCount.get(origId) ?? 0;
+        if (count === 0) {
+          seenCount.set(origId, 1);
+          idMap.set(origId, origId);
+          dedupedNodes.push(node);
+        } else {
+          const newId = `${origId}_${count}`;
+          seenCount.set(origId, count + 1);
+          idMap.set(origId, newId);
+          dedupedNodes.push({ ...node, id: newId });
+        }
+      }
+
+      const dedupedEdges = (parsed.edges ?? []).map((e: MindmapEdge) => ({
+        ...e,
+        source: idMap.get(e.source) ?? e.source,
+        target: idMap.get(e.target) ?? e.target,
+      }));
+
+      return { nodes: dedupedNodes, edges: dedupedEdges as MindmapEdge[] };
     } catch (err) {
       lastError = err;
       console.warn(
@@ -141,6 +163,30 @@ Rules:
 
       if (!parsed.ops || !Array.isArray(parsed.ops)) {
         throw new Error('Invalid response format from OpenAI');
+      }
+
+      // Post-process: remap AI-generated node IDs to globally unique IDs
+      // to prevent duplicate key collisions when expanding the same node twice
+      const idMap = new Map<string, string>();
+      for (const op of parsed.ops) {
+        if (op.type === 'add_node') {
+          const orig = op.id;
+          const unique = `${orig}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+          idMap.set(orig, unique);
+          op.id = unique;
+        }
+      }
+      // Remap edge source/target and edge IDs that reference remapped node IDs
+      for (const op of parsed.ops) {
+        if (op.type === 'add_edge') {
+          if (idMap.has(op.source)) op.source = idMap.get(op.source)!;
+          if (idMap.has(op.target)) op.target = idMap.get(op.target)!;
+          for (const [orig, unique] of idMap) {
+            if (op.id.includes(orig)) {
+              op.id = op.id.replace(orig, unique);
+            }
+          }
+        }
       }
 
       return parsed;

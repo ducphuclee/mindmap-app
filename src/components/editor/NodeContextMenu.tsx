@@ -52,7 +52,7 @@ export default function NodeContextMenu({
     <div
       ref={menuRef}
       style={{ position: 'fixed', top: y, left: x, zIndex: 9999 }}
-      className="min-w-[160px] rounded-[12px] border border-[rgba(214,235,253,0.19)] bg-black py-1 shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px]"
+      className="min-w-[160px] rounded-[12px] border border-gray-200 bg-white py-1 shadow-md"
     >
       {items.map((item) => (
         <button
@@ -62,10 +62,10 @@ export default function NodeContextMenu({
           className={[
             'flex w-full items-center px-3 py-2 text-sm transition-colors',
             item.disabled
-              ? 'cursor-not-allowed text-[#464a4d]'
+              ? 'cursor-not-allowed text-gray-300'
               : item.danger
-              ? 'text-[#ff2047] hover:bg-[rgba(255,32,71,0.08)]'
-              : 'text-[#a1a4a5] hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]',
+              ? 'text-red-500 hover:bg-red-50'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900',
           ].join(' ')}
         >
           {item.label}

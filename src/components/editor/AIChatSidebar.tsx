@@ -226,14 +226,14 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
   }, [showMentions]);
 
   return (
-    <div className="flex w-80 flex-col border-l border-[rgba(214,235,253,0.19)] bg-black">
-      <div className="border-b border-[rgba(214,235,253,0.19)] px-4 py-3">
-        <h2 className="text-sm font-semibold text-[#f0f0f0]">AI Chat</h2>
+    <div className="flex w-80 flex-col border-l border-gray-200 bg-white">
+      <div className="border-b border-gray-200 px-4 py-3">
+        <h2 className="text-sm font-semibold text-gray-900">AI Chat</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
-          <p className="mt-8 text-center text-sm text-[#a1a4a5]">
+          <p className="mt-8 text-center text-sm text-gray-500">
             Ask AI to modify your mindmap
           </p>
         )}
@@ -250,15 +250,15 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
                   msg.role === 'user'
                     ? 'bg-[#3b9eff] text-white'
                     : msg.isError
-                      ? 'bg-[rgba(255,32,71,0.08)] text-[#ff2047]'
-                      : 'bg-[rgba(255,255,255,0.08)] text-[#f0f0f0]'
+                      ? 'bg-red-50 text-red-500'
+                      : 'bg-gray-100 text-gray-900'
                 }`}
               >
                 {msg.isStreaming && !msg.content ? (
                   <span className="flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a1a4a5]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a1a4a5] [animation-delay:0.15s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a1a4a5] [animation-delay:0.3s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:0.15s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400 [animation-delay:0.3s]" />
                   </span>
                 ) : (
                   msg.content
@@ -270,12 +270,12 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
         </div>
       </div>
 
-      <div className="border-t border-[rgba(214,235,253,0.19)] px-4 py-3">
+      <div className="border-t border-gray-200 px-4 py-3">
         <div className="flex gap-2 relative">
           {showMentions && filteredMentions.length > 0 && (
             <div
               ref={mentionRef}
-              className="absolute bottom-full left-0 right-0 mb-1 max-h-32 overflow-y-auto rounded-[12px] border border-[rgba(214,235,253,0.19)] bg-black shadow-[rgba(176,199,217,0.145)_0px_0px_0px_1px] z-10"
+              className="absolute bottom-full left-0 right-0 mb-1 max-h-32 overflow-y-auto rounded-[12px] border border-gray-200 bg-white shadow-md z-10"
             >
               {filteredMentions.map((n) => (
                 <button
@@ -284,7 +284,7 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
                     e.preventDefault();
                     handleMentionClick(n.data.label);
                   }}
-                  className="w-full px-3 py-1.5 text-left text-sm text-[#a1a4a5] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#f0f0f0]"
+                  className="w-full px-3 py-1.5 text-left text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
                 >
                   @{n.data.label}
                 </button>
@@ -299,12 +299,12 @@ export default function AIChatSidebar({ context, onApplyDiff, prefillInput, onPr
             placeholder="Ask AI to modify... (type @ to mention a node)"
             rows={2}
             disabled={isLoading}
-            className="flex-1 resize-none rounded-[8px] border border-[rgba(214,235,253,0.19)] bg-black px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#464a4d] outline-none focus:border-[#3b9eff] focus:ring-1 focus:ring-[#3b9eff] disabled:opacity-50"
+            className="flex-1 resize-none rounded-[8px] border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#3b9eff] focus:ring-1 focus:ring-[#3b9eff] disabled:opacity-50"
           />
           <button
             onClick={handleSubmit}
             disabled={isLoading || !input.trim()}
-            className="self-end rounded-[9999px] border border-[rgba(214,235,253,0.19)] bg-transparent px-3 py-2 text-sm text-[#f0f0f0] transition-colors hover:bg-[rgba(255,255,255,0.28)] disabled:opacity-50"
+            className="self-end rounded-[9999px] border border-gray-200 bg-transparent px-3 py-2 text-sm text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-50"
           >
             Send
           </button>

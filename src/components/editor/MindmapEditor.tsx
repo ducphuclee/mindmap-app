@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -60,7 +60,13 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
   const initialNodes = useMemo<MindmapFlowNode[]>(() => {
     const stored = mindmap.data?.nodes ?? [];
     if (stored.length === 0) return [DEFAULT_ROOT_NODE];
-    return stored.map((n) => ({
+    const seen = new Set<string>();
+    const deduped = stored.filter((n) => {
+      if (seen.has(n.id)) return false;
+      seen.add(n.id);
+      return true;
+    });
+    return deduped.map((n) => ({
       id: n.id,
       type: n.type ?? 'mindmapNode',
       position: n.position,
@@ -195,13 +201,36 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
       };
       const nextNodes = [...nodes.map((n) => ({ ...n, selected: false as boolean | undefined })), childNode];
       const nextEdges = [...edges, childEdge];
-      setNodes(() => nextNodes);
+      // Re-run layout so new node doesn't overlap
+      const mindmapNodes: MindmapNode[] = nextNodes.map((n) => ({
+        id: n.id,
+        type: n.type,
+        position: n.position,
+        data: n.data,
+        width: n.width,
+        height: n.height,
+      }));
+      const mindmapEdges: MindmapEdge[] = nextEdges.map((e) => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type,
+      }));
+      const layouted = applyLayout(mindmapNodes, mindmapEdges, layoutType);
+      const layoutedNodes: MindmapFlowNode[] = layouted.map((n) => ({
+        id: n.id,
+        type: n.type ?? 'mindmapNode',
+        position: n.position,
+        data: n.data as MindmapNodeData,
+        selected: false,
+      }));
+      setNodes(() => layoutedNodes);
       setEdges(() => nextEdges);
       setEditingNodeId(childId);
       setTimeout(() => setEditingNodeId(null), 100);
-      pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+      pushSnapshot({ nodes: layoutedNodes, edges: nextEdges });
     },
-    [nodes, edges, setNodes, setEdges, pushSnapshot],
+    [nodes, edges, setNodes, setEdges, pushSnapshot, layoutType],
   );
 
   const addSiblingToNode = useCallback(
@@ -226,13 +255,36 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
       };
       const nextNodes = [...nodes.map((n) => ({ ...n, selected: false as boolean | undefined })), siblingNode];
       const nextEdges = [...edges, newEdge];
-      setNodes(() => nextNodes);
+      // Re-run layout so new node doesn't overlap
+      const mindmapNodes: MindmapNode[] = nextNodes.map((n) => ({
+        id: n.id,
+        type: n.type,
+        position: n.position,
+        data: n.data,
+        width: n.width,
+        height: n.height,
+      }));
+      const mindmapEdges: MindmapEdge[] = nextEdges.map((e) => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type,
+      }));
+      const layouted = applyLayout(mindmapNodes, mindmapEdges, layoutType);
+      const layoutedNodes: MindmapFlowNode[] = layouted.map((n) => ({
+        id: n.id,
+        type: n.type ?? 'mindmapNode',
+        position: n.position,
+        data: n.data as MindmapNodeData,
+        selected: false,
+      }));
+      setNodes(() => layoutedNodes);
       setEdges(() => nextEdges);
       setEditingNodeId(siblingId);
       setTimeout(() => setEditingNodeId(null), 100);
-      pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+      pushSnapshot({ nodes: layoutedNodes, edges: nextEdges });
     },
-    [nodes, edges, setNodes, setEdges, pushSnapshot],
+    [nodes, edges, setNodes, setEdges, pushSnapshot, layoutType],
   );
 
   const deleteNode = useCallback(
@@ -337,11 +389,28 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
     (diff: MindmapDiff) => {
       if (!diff?.ops?.length) return;
       const { nodes: nextNodes, edges: nextEdges } = applyDiff(nodes, edges as MindmapEdge[], diff);
-      setNodes(nextNodes as MindmapFlowNode[]);
+      const mindmapNodes: MindmapNode[] = (nextNodes as MindmapFlowNode[]).map((n) => ({
+        id: n.id,
+        type: n.type,
+        position: n.position,
+        data: n.data,
+        width: n.width,
+        height: n.height,
+      }));
+      const mindmapEdges: MindmapEdge[] = nextEdges as MindmapEdge[];
+      const layouted = applyLayout(mindmapNodes, mindmapEdges, layoutType);
+      const layoutedNodes = layouted.map((n) => ({
+        id: n.id,
+        type: n.type ?? 'mindmapNode',
+        position: n.position,
+        data: n.data as MindmapNodeData,
+        selected: false,
+      }));
+      setNodes(layoutedNodes);
       setEdges(nextEdges);
-      pushSnapshot({ nodes: nextNodes, edges: nextEdges });
+      pushSnapshot({ nodes: layoutedNodes, edges: nextEdges });
     },
-    [nodes, edges, setNodes, setEdges, pushSnapshot],
+    [nodes, edges, setNodes, setEdges, pushSnapshot, layoutType],
   );
 
   useKeyboardShortcuts({
@@ -376,35 +445,59 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
         if (!res.ok) throw new Error('Expand request failed');
         const { diff } = (await res.json()) as { diff: MindmapDiff };
         const result = applyDiff(nodes, edges as MindmapEdge[], diff);
-        setNodes(result.nodes as MindmapFlowNode[]);
+        const mindmapNodes: MindmapNode[] = (result.nodes as MindmapFlowNode[]).map((n) => ({
+          id: n.id,
+          type: n.type,
+          position: n.position,
+          data: n.data,
+          width: n.width,
+          height: n.height,
+        }));
+        const mindmapEdges: MindmapEdge[] = result.edges as MindmapEdge[];
+        const layouted = applyLayout(mindmapNodes, mindmapEdges, layoutType);
+        const layoutedNodes = layouted.map((n) => ({
+          id: n.id,
+          type: n.type ?? 'mindmapNode',
+          position: n.position,
+          data: n.data as MindmapNodeData,
+          selected: false,
+        }));
+        setNodes(layoutedNodes);
         setEdges(result.edges);
-        pushSnapshot({ nodes: result.nodes as MindmapFlowNode[], edges: result.edges });
+        pushSnapshot({ nodes: layoutedNodes, edges: result.edges });
       } catch (err) {
         console.error('Failed to expand node:', err);
       } finally {
         setExpandingNodeId(undefined);
       }
     },
-    [nodes, edges, setNodes, setEdges, pushSnapshot],
+    [nodes, edges, setNodes, setEdges, pushSnapshot, layoutType],
   );
 
-  const handleSendToChat = useCallback((nodeLabel: string) => {
-    setChatPrefill(`@${nodeLabel} `);
+  const handleSendToChat = useCallback((nodeId: string) => {
+    setChatPrefill(`@${nodeId} `);
   }, []);
 
-  const nodeTypes = useMemo<NodeTypes>(
-    () => ({
-      mindmapNode: (props: NodeProps<MindmapFlowNode>) => (
-        <MindmapNodeComponent
-          {...props}
-          onExpand={handleExpandNode}
-          expandingNodeId={expandingNodeId}
-          onSendToChat={handleSendToChat}
-        />
-      ),
-    }),
-    [handleExpandNode, expandingNodeId, handleSendToChat],
-  );
+  // Latest ref pattern: keep stable nodeTypes while reading latest callbacks/state
+  const handleExpandNodeRef = useRef(handleExpandNode);
+  handleExpandNodeRef.current = handleExpandNode;
+
+  const expandingNodeIdRef = useRef(expandingNodeId);
+  expandingNodeIdRef.current = expandingNodeId;
+
+  const handleSendToChatRef = useRef(handleSendToChat);
+  handleSendToChatRef.current = handleSendToChat;
+
+  const nodeTypes = useMemo<NodeTypes>(() => ({
+    mindmapNode: (props: NodeProps<MindmapFlowNode>) => (
+      <MindmapNodeComponent
+        {...props}
+        onExpand={handleExpandNodeRef.current}
+        expandingNodeId={expandingNodeIdRef.current}
+        onSendToChat={handleSendToChatRef.current}
+      />
+    ),
+  }), []);
 
   const handleLayoutChange = useCallback(
     (type: LayoutType) => {
