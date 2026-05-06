@@ -85,6 +85,7 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
     }));
   }, [mindmap.data?.edges]);
 
+  const [title, setTitle] = useState(mindmap.title);
   const [layoutType, setLayoutType] = useState<LayoutType>(
     mindmap.data?.layoutType ?? 'radial',
   );
@@ -539,7 +540,7 @@ function MindmapEditorInner({ mindmap }: MindmapEditorProps) {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-gray-50">
-      <EditorHeader title={mindmap.title} saveStatus={saveStatus} />
+      <EditorHeader title={title} saveStatus={saveStatus} mindmapId={mindmap.id} onTitleSaved={(newTitle) => setTitle(newTitle)} />
       <EditorToolbar
         currentLayout={layoutType}
         onLayoutChange={handleLayoutChange}
