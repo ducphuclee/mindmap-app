@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import pdfParse from 'pdf-parse';
+
+// pdf-parse is CommonJS — must use require() to avoid ESM default export error
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfParse = require('pdf-parse') as (buffer: Buffer) => Promise<{ text: string }>;
 
 export async function POST(request: Request) {
   const supabase = await createClient();
